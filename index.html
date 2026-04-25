@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Data Mining Interactive Textbook</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <header class="hero">
+      <div class="hero-copy">
+        <p class="eyebrow">Interactive Textbook Platform</p>
+        <h1>Data Mining Techniques</h1>
+        <p class="hero-text">
+          Study every chapter from the textbook with guided chapter notes, flashcards, concept checks,
+          and saved quiz progress in one place.
+        </p>
+        <div class="hero-tags">
+          <button id="jump-chapters-button" class="hero-tag" type="button">13 chapters</button>
+          <button id="jump-flashcards-button" class="hero-tag" type="button">Flashcards</button>
+          <button id="jump-quiz-button" class="hero-tag" type="button">Quiz mode</button>
+          <button id="jump-progress-button" class="hero-tag" type="button">Saved progress</button>
+        </div>
+      </div>
+      <div class="hero-panel">
+        <h2>Study Path</h2>
+        <ol class="hero-steps">
+          <li>Pick a chapter from the left.</li>
+          <li>Read the overview and key ideas.</li>
+          <li>Flip through flashcards.</li>
+          <li>Take the chapter quiz.</li>
+        </ol>
+        <p class="source-note">Source textbook: Data Mining: Concepts and Techniques, 3rd Edition.</p>
+      </div>
+    </header>
+
+    <main class="main-layout">
+      <aside id="chapters-section" class="sidebar card">
+        <div class="section-heading">
+          <h2>Chapters</h2>
+          <p>Choose a chapter to start learning.</p>
+        </div>
+        <div id="chapter-list" class="chapter-list"></div>
+
+        <div class="progress-card">
+          <h3>Progress</h3>
+          <div class="progress-row">
+            <span>Completed quizzes</span>
+            <strong id="completed-count">0 / 13</strong>
+          </div>
+          <div class="progress-row">
+            <span>Current chapter</span>
+            <strong id="current-chapter-label">Chapter 1</strong>
+          </div>
+          <div class="progress-row">
+            <span>Best score</span>
+            <strong id="best-score-label">Not yet</strong>
+          </div>
+        </div>
+      </aside>
+
+      <section class="content">
+        <section class="card chapter-card">
+          <div class="section-heading">
+            <h2 id="chapter-title">Chapter 1: Introduction</h2>
+            <p id="chapter-page-range">Textbook chapter coverage</p>
+          </div>
+
+          <div class="chapter-summary">
+            <p id="chapter-summary"></p>
+          </div>
+        </section>
+
+        <section id="quiz-section" class="card quiz-card">
+          <div class="section-heading">
+            <h2>Chapter Quiz</h2>
+            <p>Each chapter has 10 levels and 100 total questions. Start at Level 1 and work upward.</p>
+          </div>
+
+          <div class="quiz-level-box">
+            <div class="quiz-level-head">
+              <h3>Choose Quiz Level</h3>
+              <p>Each level contains 10 questions and gets more complex.</p>
+            </div>
+            <div id="level-grid" class="level-grid"></div>
+          </div>
+
+          <div class="quiz-toolbar">
+            <div id="quiz-status" class="quiz-status">Choose a level to begin</div>
+            <div id="quiz-score-pill" class="quiz-score-pill">Score: 0</div>
+          </div>
+
+          <div class="progress-track">
+            <div id="quiz-progress-bar" class="progress-bar"></div>
+          </div>
+
+          <div id="quiz-panel">
+            <h3 id="quiz-question" class="quiz-question"></h3>
+            <div id="quiz-options" class="quiz-options"></div>
+            <div id="quiz-feedback" class="quiz-feedback hidden"></div>
+            <div class="quiz-actions">
+              <button id="next-question-button" class="primary-button hidden">Next Question</button>
+            </div>
+          </div>
+
+          <div id="quiz-results" class="hidden">
+            <div id="quiz-results-summary" class="results-summary"></div>
+            <div id="quiz-results-list" class="results-list"></div>
+            <div class="quiz-actions">
+              <button id="retry-quiz-button" class="secondary-button">Retry Quiz</button>
+              <button id="next-level-button" class="primary-button">Next Level</button>
+            </div>
+          </div>
+        </section>
+
+        <section id="flashcards-section" class="card">
+          <div class="section-heading">
+            <h2>Flashcards</h2>
+            <p>Flip cards to study definitions, why they matter, and textbook-style examples.</p>
+          </div>
+
+          <div class="flashcard-controls">
+            <button id="prev-card-button" class="secondary-button">Previous</button>
+            <div id="card-position" class="card-position">Card 1</div>
+            <button id="next-card-button" class="secondary-button">Next</button>
+          </div>
+
+          <button id="flashcard" class="flashcard" type="button">
+            <div class="flashcard-face flashcard-front">
+              <span class="flashcard-label">Question</span>
+              <h3 id="flashcard-front-text"></h3>
+              <p>Click to reveal</p>
+            </div>
+            <div class="flashcard-face flashcard-back">
+              <span class="flashcard-label">Answer</span>
+              <h3 id="flashcard-back-text"></h3>
+              <p>Click to go back</p>
+            </div>
+          </button>
+        </section>
+      </section>
+    </main>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
