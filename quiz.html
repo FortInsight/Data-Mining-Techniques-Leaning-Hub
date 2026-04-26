@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Data Mining Interactive Textbook</title>
+  <title>Data Mining Quiz</title>
   <meta name="theme-color" content="#0b1f3a" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
@@ -11,19 +11,19 @@
   <link rel="icon" href="icon-192.svg" type="image/svg+xml" />
   <link rel="stylesheet" href="styles.css" />
 </head>
-<body data-page="home">
+<body data-page="quiz">
   <div class="app-shell">
     <header class="page-header card">
       <div>
-        <p class="eyebrow">Interactive Textbook Platform</p>
-        <h1>Data Mining Techniques</h1>
+        <p class="eyebrow">Quiz Page</p>
+        <h1>Chapter Quiz Practice</h1>
         <p class="hero-text">
-          Study chapter by chapter, see your saved progress clearly, and move into larger quiz and flashcard pages from one navigator panel.
+          This page is larger on purpose so the quiz is easier to read, answer, and review.
         </p>
       </div>
       <div class="header-actions">
-        <a class="quick-link" href="quiz.html">Open Quiz Page</a>
-        <a class="quick-link" href="flashcards.html">Open Flashcards Page</a>
+        <a class="quick-link" href="index.html">Back to Chapters</a>
+        <a class="quick-link" href="flashcards.html">Go to Flashcards</a>
       </div>
     </header>
 
@@ -31,7 +31,7 @@
       <aside class="nav-panel card">
         <div class="section-heading">
           <h2>Navigator</h2>
-          <p>Use these pages to move around the textbook app.</p>
+          <p>Move between the three app pages here.</p>
         </div>
 
         <nav class="nav-links">
@@ -42,7 +42,7 @@
 
         <div class="section-heading compact">
           <h3>Choose Chapter</h3>
-          <p>Pick a chapter once and the other pages follow it.</p>
+          <p>Switch chapter and keep practicing here.</p>
         </div>
         <div class="chapter-select-wrap">
           <select id="chapter-select" class="chapter-select"></select>
@@ -68,29 +68,48 @@
       </aside>
 
       <section class="page-main">
-        <section class="card feature-card">
+        <section class="card quiz-page-card">
           <div class="section-heading">
-            <h2 id="chapter-title">Chapter 1</h2>
-            <p id="chapter-pages"></p>
+            <h2>Chapter Quiz</h2>
+            <p>Each chapter has 10 levels and 100 questions in total. Higher levels get more complex.</p>
           </div>
-          <p id="chapter-summary-text" class="large-copy"></p>
-        </section>
 
-        <section class="card">
-          <div class="section-heading">
-            <h2>Key Ideas</h2>
-            <p>These are the main ideas you should know before moving into practice.</p>
+          <div class="quiz-level-box">
+            <div class="quiz-level-head">
+              <h3>Choose Quiz Level</h3>
+              <p>Select one level at a time. Completed levels stay saved.</p>
+            </div>
+            <div id="level-grid" class="level-grid"></div>
           </div>
-          <div id="chapter-topics" class="topic-list"></div>
-        </section>
 
-        <section class="card">
-          <div class="section-heading">
-            <h2>Saved Progress Details</h2>
-            <p>This area shows what has already been completed in the app.</p>
+          <div class="quiz-toolbar">
+            <div id="quiz-status" class="quiz-status">Choose a level to begin</div>
+            <div id="quiz-score-pill" class="quiz-score-pill">Score: 0</div>
           </div>
-          <div id="saved-progress-empty" class="status-card">No saved progress yet. Complete a quiz level or view flashcards to start building history.</div>
-          <div id="saved-progress-list" class="saved-progress-list"></div>
+
+          <div class="progress-track">
+            <div id="quiz-progress-bar" class="progress-bar"></div>
+          </div>
+
+          <div id="quiz-panel" class="quiz-panel">
+            <div class="quiz-main-column">
+              <h3 id="quiz-question" class="quiz-question"></h3>
+              <div id="quiz-options" class="quiz-options"></div>
+              <div class="quiz-actions">
+                <button id="next-question-button" class="primary-button hidden" type="button">Next Question</button>
+              </div>
+            </div>
+            <aside id="quiz-feedback" class="quiz-feedback hidden"></aside>
+          </div>
+
+          <div id="quiz-results" class="hidden">
+            <div id="quiz-results-summary" class="results-summary"></div>
+            <div id="quiz-results-list" class="results-list"></div>
+            <div class="quiz-actions">
+              <button id="retry-quiz-button" class="secondary-button" type="button">Retry Quiz</button>
+              <button id="next-level-button" class="primary-button" type="button">Next Level</button>
+            </div>
+          </div>
         </section>
       </section>
     </main>

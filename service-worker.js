@@ -1,7 +1,9 @@
-const CACHE_NAME = "data-mining-textbook-v2";
+const CACHE_NAME = "data-mining-textbook-v3";
 const APP_ASSETS = [
   "./",
   "./index.html",
+  "./quiz.html",
+  "./flashcards.html",
   "./styles.css",
   "./app.js",
   "./manifest.webmanifest",

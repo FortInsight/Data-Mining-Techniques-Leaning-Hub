@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Data Mining Interactive Textbook</title>
+  <title>Data Mining Flashcards</title>
   <meta name="theme-color" content="#0b1f3a" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
@@ -11,19 +11,19 @@
   <link rel="icon" href="icon-192.svg" type="image/svg+xml" />
   <link rel="stylesheet" href="styles.css" />
 </head>
-<body data-page="home">
+<body data-page="flashcards">
   <div class="app-shell">
     <header class="page-header card">
       <div>
-        <p class="eyebrow">Interactive Textbook Platform</p>
-        <h1>Data Mining Techniques</h1>
+        <p class="eyebrow">Flashcards Page</p>
+        <h1>Interactive Flashcards</h1>
         <p class="hero-text">
-          Study chapter by chapter, see your saved progress clearly, and move into larger quiz and flashcard pages from one navigator panel.
+          Use this page to focus on chapter concepts, definitions, why they matter, and examples.
         </p>
       </div>
       <div class="header-actions">
-        <a class="quick-link" href="quiz.html">Open Quiz Page</a>
-        <a class="quick-link" href="flashcards.html">Open Flashcards Page</a>
+        <a class="quick-link" href="index.html">Back to Chapters</a>
+        <a class="quick-link" href="quiz.html">Go to Quiz</a>
       </div>
     </header>
 
@@ -31,7 +31,7 @@
       <aside class="nav-panel card">
         <div class="section-heading">
           <h2>Navigator</h2>
-          <p>Use these pages to move around the textbook app.</p>
+          <p>Move between the three app pages here.</p>
         </div>
 
         <nav class="nav-links">
@@ -42,7 +42,7 @@
 
         <div class="section-heading compact">
           <h3>Choose Chapter</h3>
-          <p>Pick a chapter once and the other pages follow it.</p>
+          <p>Switch the chapter and keep studying cards here.</p>
         </div>
         <div class="chapter-select-wrap">
           <select id="chapter-select" class="chapter-select"></select>
@@ -68,29 +68,30 @@
       </aside>
 
       <section class="page-main">
-        <section class="card feature-card">
-          <div class="section-heading">
-            <h2 id="chapter-title">Chapter 1</h2>
-            <p id="chapter-pages"></p>
-          </div>
-          <p id="chapter-summary-text" class="large-copy"></p>
-        </section>
-
         <section class="card">
           <div class="section-heading">
-            <h2>Key Ideas</h2>
-            <p>These are the main ideas you should know before moving into practice.</p>
+            <h2>Flashcards</h2>
+            <p>Flip cards to learn the chapter concepts in a more detailed way.</p>
           </div>
-          <div id="chapter-topics" class="topic-list"></div>
-        </section>
 
-        <section class="card">
-          <div class="section-heading">
-            <h2>Saved Progress Details</h2>
-            <p>This area shows what has already been completed in the app.</p>
+          <div class="flashcard-controls">
+            <button id="prev-card-button" class="secondary-button" type="button">Previous</button>
+            <div id="card-position" class="card-position">Card 1</div>
+            <button id="next-card-button" class="secondary-button" type="button">Next</button>
           </div>
-          <div id="saved-progress-empty" class="status-card">No saved progress yet. Complete a quiz level or view flashcards to start building history.</div>
-          <div id="saved-progress-list" class="saved-progress-list"></div>
+
+          <button id="flashcard" class="flashcard" type="button">
+            <div class="flashcard-face flashcard-front">
+              <span class="flashcard-label">Question</span>
+              <h3 id="flashcard-front-text"></h3>
+              <p>Click to reveal the answer</p>
+            </div>
+            <div class="flashcard-face flashcard-back">
+              <span class="flashcard-label">Answer</span>
+              <h3 id="flashcard-back-text"></h3>
+              <p>Click to go back</p>
+            </div>
+          </button>
         </section>
       </section>
     </main>

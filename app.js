@@ -1,4 +1,4 @@
-const storageKey = "data-mining-interactive-textbook-v1";
+﻿const storageKey = "data-mining-interactive-textbook-v1";
 
 const chapters = [
   {
@@ -1292,12 +1292,13 @@ const chapterFacts = {
 
 enrichChapters();
 
+const uiStateKey = "data-mining-interactive-textbook-ui-v1";
+const savedUiState = loadUiState();
 const state = {
-  chapterIndex: 0,
-  activeTab: "quiz",
-  flashcardIndex: 0,
+  chapterIndex: savedUiState.chapterIndex ?? 0,
+  flashcardIndex: savedUiState.flashcardIndex ?? 0,
   flashcardFlipped: false,
-  selectedLevel: 1,
+  selectedLevel: savedUiState.selectedLevel ?? 1,
   quizQuestions: [],
   quizIndex: 0,
   quizScore: 0,
@@ -1306,29 +1307,22 @@ const state = {
 };
 
 const progress = loadProgress();
+const currentPage = document.body.dataset.page || "home";
 
 const elements = {
-  jumpChaptersButton: document.getElementById("jump-chapters-button"),
-  jumpFlashcardsButton: document.getElementById("jump-flashcards-button"),
-  jumpQuizButton: document.getElementById("jump-quiz-button"),
-  jumpProgressButton: document.getElementById("jump-progress-button"),
-  tabQuiz: document.getElementById("tab-quiz"),
-  tabFlashcards: document.getElementById("tab-flashcards"),
-  chaptersSection: document.getElementById("chapters-section"),
-  flashcardsSection: document.getElementById("flashcards-section"),
-  quizSection: document.getElementById("quiz-section"),
+  navLinks: [...document.querySelectorAll("[data-nav]")],
   chapterSelect: document.getElementById("chapter-select"),
   chapterCurrentCard: document.getElementById("chapter-current-card"),
   completedCount: document.getElementById("completed-count"),
   currentChapterLabel: document.getElementById("current-chapter-label"),
   bestScoreLabel: document.getElementById("best-score-label"),
+  chapterTitle: document.getElementById("chapter-title"),
+  chapterPages: document.getElementById("chapter-pages"),
+  chapterSummaryText: document.getElementById("chapter-summary-text"),
+  chapterTopics: document.getElementById("chapter-topics"),
+  savedProgressList: document.getElementById("saved-progress-list"),
+  savedProgressEmpty: document.getElementById("saved-progress-empty"),
   levelGrid: document.getElementById("level-grid"),
-  flashcard: document.getElementById("flashcard"),
-  flashcardFrontText: document.getElementById("flashcard-front-text"),
-  flashcardBackText: document.getElementById("flashcard-back-text"),
-  cardPosition: document.getElementById("card-position"),
-  prevCardButton: document.getElementById("prev-card-button"),
-  nextCardButton: document.getElementById("next-card-button"),
   quizStatus: document.getElementById("quiz-status"),
   quizScorePill: document.getElementById("quiz-score-pill"),
   quizProgressBar: document.getElementById("quiz-progress-bar"),
@@ -1341,52 +1335,89 @@ const elements = {
   quizResultsSummary: document.getElementById("quiz-results-summary"),
   quizResultsList: document.getElementById("quiz-results-list"),
   retryQuizButton: document.getElementById("retry-quiz-button"),
-  nextLevelButton: document.getElementById("next-level-button")
+  nextLevelButton: document.getElementById("next-level-button"),
+  flashcard: document.getElementById("flashcard"),
+  flashcardFrontText: document.getElementById("flashcard-front-text"),
+  flashcardBackText: document.getElementById("flashcard-back-text"),
+  cardPosition: document.getElementById("card-position"),
+  prevCardButton: document.getElementById("prev-card-button"),
+  nextCardButton: document.getElementById("next-card-button")
 };
 
 init();
 
 function init() {
-  renderChapterSelector();
   attachEvents();
-  renderTabs();
-  renderChapter();
+  renderNavigation();
+  renderChapterSelector();
+  renderCurrentChapterCard();
   updateProgressPanel();
+  if (elements.levelGrid) {
+    renderLevelButtons();
+  }
+  renderPage();
   registerServiceWorker();
 }
 
 function attachEvents() {
-  elements.jumpChaptersButton.addEventListener("click", () => scrollToSection(elements.chaptersSection));
-  elements.jumpFlashcardsButton.addEventListener("click", () => activateTab("flashcards"));
-  elements.jumpQuizButton.addEventListener("click", () => activateTab("quiz"));
-  elements.jumpProgressButton.addEventListener("click", () => scrollToSection(elements.chaptersSection));
-  elements.chapterSelect.addEventListener("change", (event) => {
-    selectChapter(Number(event.target.value));
+  if (elements.chapterSelect) {
+    elements.chapterSelect.addEventListener("change", (event) => {
+      selectChapter(Number(event.target.value));
+    });
+  }
+
+  if (elements.prevCardButton) {
+    elements.prevCardButton.addEventListener("click", () => moveFlashcard(-1));
+  }
+
+  if (elements.nextCardButton) {
+    elements.nextCardButton.addEventListener("click", () => moveFlashcard(1));
+  }
+
+  if (elements.flashcard) {
+    elements.flashcard.addEventListener("click", flipFlashcard);
+  }
+
+  if (elements.nextQuestionButton) {
+    elements.nextQuestionButton.addEventListener("click", moveToNextQuestion);
+  }
+
+  if (elements.retryQuizButton) {
+    elements.retryQuizButton.addEventListener("click", resetQuiz);
+  }
+
+  if (elements.nextLevelButton) {
+    elements.nextLevelButton.addEventListener("click", moveToNextLevel);
+  }
+}
+
+function renderNavigation() {
+  elements.navLinks.forEach((link) => {
+    link.classList.toggle("active", link.dataset.nav === currentPage);
   });
-  elements.tabQuiz.addEventListener("click", () => activateTab("quiz"));
-  elements.tabFlashcards.addEventListener("click", () => activateTab("flashcards"));
-  elements.prevCardButton.addEventListener("click", () => moveFlashcard(-1));
-  elements.nextCardButton.addEventListener("click", () => moveFlashcard(1));
-  elements.flashcard.addEventListener("click", flipFlashcard);
-  elements.nextQuestionButton.addEventListener("click", moveToNextQuestion);
-  elements.retryQuizButton.addEventListener("click", resetQuiz);
-  elements.nextLevelButton.addEventListener("click", moveToNextLevel);
 }
 
 function renderChapterSelector() {
+  if (!elements.chapterSelect) {
+    return;
+  }
+
   elements.chapterSelect.innerHTML = chapters
     .map((chapter, index) => `<option value="${index}">Chapter ${chapter.id}: ${chapter.title}</option>`)
     .join("");
-
-  renderCurrentChapterCard();
+  elements.chapterSelect.value = String(state.chapterIndex);
 }
 
 function renderCurrentChapterCard() {
+  if (!elements.chapterCurrentCard) {
+    return;
+  }
+
   const chapter = getCurrentChapter();
-  const completedLevels = Object.keys(progress[chapter.id]?.levels || {}).length;
-  const viewedCards = progress[chapter.id]?.flashcardsViewed || 0;
-  elements.chapterSelect.value = String(state.chapterIndex);
-  elements.chapterCurrentCard.className = "chapter-button active";
+  const chapterProgress = progress[chapter.id] || {};
+  const completedLevels = Object.keys(chapterProgress.levels || {}).length;
+  const viewedCards = chapterProgress.flashcardsViewed || 0;
+
   elements.chapterCurrentCard.innerHTML = `
     <strong>Chapter ${chapter.id}</strong>
     <span>${chapter.title}</span>
@@ -1395,42 +1426,107 @@ function renderCurrentChapterCard() {
 }
 
 function selectChapter(index) {
-  state.chapterIndex = index;
+  state.chapterIndex = Number.isFinite(index) ? index : 0;
   state.flashcardIndex = 0;
   state.flashcardFlipped = false;
   state.selectedLevel = 1;
-  resetQuiz();
+  state.quizQuestions = [];
+  state.quizIndex = 0;
+  state.quizScore = 0;
+  state.quizAnswered = false;
+  state.quizResults = [];
+  saveUiState();
   renderCurrentChapterCard();
-  renderChapter();
   updateProgressPanel();
-}
-
-function renderChapter() {
-  renderLevelButtons();
-  renderQuiz();
-  renderFlashcard();
-}
-
-function renderTabs() {
-  elements.tabQuiz.classList.toggle("active", state.activeTab === "quiz");
-  elements.tabFlashcards.classList.toggle("active", state.activeTab === "flashcards");
-  elements.quizSection.classList.toggle("hidden", state.activeTab !== "quiz");
-  elements.flashcardsSection.classList.toggle("hidden", state.activeTab !== "flashcards");
-}
-
-function activateTab(tab) {
-  state.activeTab = tab;
-  renderTabs();
-
-  if (tab === "quiz") {
-    scrollToSection(elements.quizSection);
-  } else if (tab === "flashcards") {
-    scrollToSection(elements.flashcardsSection);
+  if (elements.levelGrid) {
+    renderLevelButtons();
   }
+  renderPage();
 }
 
-function renderFlashcard() {
+function renderPage() {
+  renderHomePage();
+  renderFlashcardPage();
+  renderQuizPage();
+}
+
+function renderHomePage() {
+  if (!elements.chapterTitle) {
+    return;
+  }
+
   const chapter = getCurrentChapter();
+  elements.chapterTitle.textContent = `Chapter ${chapter.id}: ${chapter.title}`;
+  if (elements.chapterPages) {
+    elements.chapterPages.textContent = chapter.pages;
+  }
+  if (elements.chapterSummaryText) {
+    elements.chapterSummaryText.textContent = chapter.summary;
+  }
+  if (elements.chapterTopics) {
+    elements.chapterTopics.innerHTML = chapter.subtopics.map((topic) => `
+      <div class="topic-item">
+        <strong>${topic}</strong>
+        <span>Study this idea in the flashcards, then test it on the quiz page.</span>
+      </div>
+    `).join("");
+  }
+  renderSavedProgressList();
+}
+
+function renderSavedProgressList() {
+  if (!elements.savedProgressList || !elements.savedProgressEmpty) {
+    return;
+  }
+
+  const entries = chapters
+    .map((chapter) => {
+      const chapterProgress = progress[chapter.id];
+      if (!chapterProgress) {
+        return null;
+      }
+
+      const levels = Object.entries(chapterProgress.levels || {})
+        .sort((a, b) => Number(a[0]) - Number(b[0]))
+        .map(([level, details]) => `Level ${level} (${details.bestScore || 0}/10)`);
+      const viewedCards = chapterProgress.flashcardsViewed || 0;
+
+      if (!levels.length && !viewedCards) {
+        return null;
+      }
+
+      return {
+        chapter,
+        levels,
+        viewedCards
+      };
+    })
+    .filter(Boolean);
+
+  if (!entries.length) {
+    elements.savedProgressEmpty.classList.remove("hidden");
+    elements.savedProgressList.innerHTML = "";
+    return;
+  }
+
+  elements.savedProgressEmpty.classList.add("hidden");
+  elements.savedProgressList.innerHTML = entries.map((entry) => `
+    <div class="saved-item">
+      <strong>Chapter ${entry.chapter.id}: ${entry.chapter.title}</strong>
+      <div class="saved-item-meta">${entry.levels.length ? `Completed levels: ${entry.levels.join(", ")}` : "No completed quiz levels yet"}</div>
+      <div class="saved-item-meta">Flashcards viewed: ${entry.viewedCards}</div>
+    </div>
+  `).join("");
+}
+
+function renderFlashcardPage() {
+  if (!elements.flashcard) {
+    return;
+  }
+
+  const chapter = getCurrentChapter();
+  const safeIndex = Math.min(state.flashcardIndex, chapter.flashcards.length - 1);
+  state.flashcardIndex = Math.max(0, safeIndex);
   const card = chapter.flashcards[state.flashcardIndex];
 
   elements.flashcard.classList.toggle("flipped", state.flashcardFlipped);
@@ -1443,7 +1539,8 @@ function moveFlashcard(direction) {
   const chapter = getCurrentChapter();
   state.flashcardIndex = (state.flashcardIndex + direction + chapter.flashcards.length) % chapter.flashcards.length;
   state.flashcardFlipped = false;
-  renderFlashcard();
+  saveUiState();
+  renderFlashcardPage();
 }
 
 function flipFlashcard() {
@@ -1451,27 +1548,67 @@ function flipFlashcard() {
   if (state.flashcardFlipped) {
     saveFlashcardProgress();
   }
-  renderFlashcard();
+  renderFlashcardPage();
+}
+
+function renderQuizPage() {
+  if (!elements.levelGrid) {
+    return;
+  }
+
+  renderLevelButtons();
+  if (!state.quizQuestions.length) {
+    resetQuiz();
+    return;
+  }
+  renderQuiz();
+}
+
+function startLevel(level) {
+  state.selectedLevel = level;
+  state.quizQuestions = [];
+  state.quizIndex = 0;
+  state.quizScore = 0;
+  state.quizAnswered = false;
+  state.quizResults = [];
+  saveUiState();
+  renderLevelButtons();
+  resetQuiz();
+  if (elements.quizQuestion) {
+    elements.quizQuestion.scrollIntoView({
+      behavior: "smooth",
+      block: "start"
+    });
+  }
 }
 
 function resetQuiz() {
+  if (!elements.quizPanel || !elements.quizResults) {
+    return;
+  }
+
   state.quizQuestions = getCurrentLevelQuestions();
   state.quizIndex = 0;
   state.quizScore = 0;
   state.quizAnswered = false;
   state.quizResults = [];
+  saveUiState();
   elements.quizPanel.classList.remove("hidden");
   elements.quizResults.classList.add("hidden");
   renderQuiz();
 }
 
 function renderQuiz() {
-  const chapter = getCurrentChapter();
+  if (!elements.quizQuestion) {
+    return;
+  }
+
   const question = state.quizQuestions[state.quizIndex];
 
   if (!question) {
     if (state.quizQuestions.length === 0) {
       elements.quizStatus.textContent = "Choose a level to begin";
+      elements.quizScorePill.textContent = "Score: 0";
       elements.quizQuestion.textContent = "Pick one level above to start your 10-question quiz set.";
       elements.quizOptions.innerHTML = "";
       elements.quizFeedback.className = "quiz-feedback hidden";
@@ -1496,6 +1633,7 @@ function renderQuiz() {
   question.options.forEach((option, optionIndex) => {
     const button = document.createElement("button");
     button.className = "quiz-option";
+    button.type = "button";
     button.textContent = option;
     button.addEventListener("click", () => checkAnswer(optionIndex));
     elements.quizOptions.appendChild(button);
@@ -1503,7 +1641,7 @@ function renderQuiz() {
 }
 
 function checkAnswer(selectedIndex) {
-  if (state.quizAnswered) {
+  if (state.quizAnswered || !elements.quizOptions) {
     return;
   }
 
@@ -1538,12 +1676,11 @@ function checkAnswer(selectedIndex) {
   elements.quizFeedback.className = `quiz-feedback ${isCorrect ? "correct" : "wrong"}`;
   elements.quizFeedback.innerHTML = `
     <div class="feedback-head">
-      <span class="feedback-emoji">${isCorrect ? "🎉" : "📘"}</span>
+      <span class="feedback-emoji">${isCorrect ? "ðŸŽ‰" : "ðŸ“•"}</span>
       <strong>${isCorrect ? "Correct answer" : "Wrong answer"}</strong>
     </div>
     <div>${question.explanation}</div>
   `;
-  elements.quizFeedback.querySelector(".feedback-emoji").textContent = isCorrect ? "🎉" : "📕";
   elements.nextQuestionButton.textContent = state.quizIndex === state.quizQuestions.length - 1 ? "See Results" : "Next Question";
   elements.nextQuestionButton.classList.remove("hidden");
 }
@@ -1560,17 +1697,11 @@ function moveToNextQuestion() {
 
 function renderQuizResults() {
   const chapter = getCurrentChapter();
-  const previousBest = progress[chapter.id]?.levels?.[state.selectedLevel]?.bestScore || 0;
+  const chapterProgress = ensureChapterProgress(chapter.id);
+  const previousBest = chapterProgress.levels[state.selectedLevel]?.bestScore || 0;
   const bestScore = Math.max(previousBest, state.quizScore);
 
-  if (!progress[chapter.id]) {
-    progress[chapter.id] = { levels: {} };
-  }
-  if (!progress[chapter.id].levels) {
-    progress[chapter.id].levels = {};
-  }
-
-  progress[chapter.id].levels[state.selectedLevel] = {
+  chapterProgress.levels[state.selectedLevel] = {
     bestScore,
     completed: true,
     completedAt: new Date().toISOString()
@@ -1594,6 +1725,39 @@ function renderQuizResults() {
   renderCurrentChapterCard();
   renderLevelButtons();
   updateProgressPanel();
+  renderSavedProgressList();
+}
+
+function renderLevelButtons() {
+  if (!elements.levelGrid) {
+    return;
+  }
+
+  const chapter = getCurrentChapter();
+  elements.levelGrid.innerHTML = "";
+
+  for (let level = 1; level <= 10; level += 1) {
+    const bestScore = progress[chapter.id]?.levels?.[level]?.bestScore;
+    const isCompleted = Boolean(progress[chapter.id]?.levels?.[level]?.completed);
+    const button = document.createElement("button");
+    button.className = `level-button ${state.selectedLevel === level ? "active" : ""}`;
+    button.type = "button";
+    button.setAttribute("data-level", String(level));
+    button.innerHTML = `
+      <strong>Level ${level}</strong>
+      <span class="level-meta">${isCompleted ? `Done | Best: ${bestScore}/10` : "10 questions"}</span>
+    `;
+    button.addEventListener("click", () => startLevel(level));
+    elements.levelGrid.appendChild(button);
+  }
+}
+
+function moveToNextLevel() {
+  if (state.selectedLevel < 10) {
+    startLevel(state.selectedLevel + 1);
+    return;
+  }
+  startLevel(state.selectedLevel);
 }
 
 function updateProgressPanel() {
@@ -1603,13 +1767,38 @@ function updateProgressPanel() {
   const bestScore = Object.values(chapterLevels).reduce((best, level) => Math.max(best, level.bestScore || 0), 0);
   const viewedCards = progress[chapter.id]?.flashcardsViewed || 0;
 
-  elements.completedCount.textContent = `${completed} / ${chapters.length * 10}`;
-  elements.currentChapterLabel.textContent = `Chapter ${chapter.id}`;
-  elements.bestScoreLabel.textContent = bestScore ? `Best level score ${bestScore}/10 | Cards viewed ${viewedCards}` : viewedCards ? `Cards viewed ${viewedCards}` : "No activity yet";
+  if (elements.completedCount) {
+    elements.completedCount.textContent = `${completed} / ${chapters.length * 10}`;
+  }
+  if (elements.currentChapterLabel) {
+    elements.currentChapterLabel.textContent = `Chapter ${chapter.id}`;
+  }
+  if (elements.bestScoreLabel) {
+    elements.bestScoreLabel.textContent = bestScore ? `Best level score ${bestScore}/10 | Cards viewed ${viewedCards}` : viewedCards ? `Cards viewed ${viewedCards}` : "No activity yet";
+  }
 }
 
 function getCurrentChapter() {
-  return chapters[state.chapterIndex];
+  return chapters[Math.max(0, Math.min(chapters.length - 1, state.chapterIndex))];
+}
+
+function getCurrentLevelQuestions() {
+  const chapter = getCurrentChapter();
+  const start = (state.selectedLevel - 1) * 10;
+  return chapter.questionBank.slice(start, start + 10);
+}
+
+function ensureChapterProgress(chapterId) {
+  if (!progress[chapterId]) {
+    progress[chapterId] = { levels: {}, flashcardsViewed: 0 };
+  }
+  if (!progress[chapterId].levels) {
+    progress[chapterId].levels = {};
+  }
+  if (!Number.isFinite(progress[chapterId].flashcardsViewed)) {
+    progress[chapterId].flashcardsViewed = 0;
+  }
+  return progress[chapterId];
 }
 
 function loadProgress() {
@@ -1624,15 +1813,20 @@ function saveProgress() {
   localStorage.setItem(storageKey, JSON.stringify(progress));
 }
 
-function scrollToSection(element) {
-  if (!element) {
-    return;
+function loadUiState() {
+  try {
+    return JSON.parse(localStorage.getItem(uiStateKey)) || {};
+  } catch (error) {
+    return {};
   }
+}
 
-  element.scrollIntoView({
-    behavior: "smooth",
-    block: "start"
-  });
+function saveUiState() {
+  localStorage.setItem(uiStateKey, JSON.stringify({
+    chapterIndex: state.chapterIndex,
+    flashcardIndex: state.flashcardIndex,
+    selectedLevel: state.selectedLevel
+  }));
 }
 
 function registerServiceWorker() {
@@ -1661,6 +1855,7 @@ function enrichChapters() {
       front: `How does Chapter ${chapter.id} explain "${topic}"?`,
       back: buildTopicExplanation(chapter, topic, index)
     }));
+
     chapter.flashcards = [...chapter.flashcards, ...factCards, ...generatedFlashcards];
     chapter.questionBank = buildQuestionBank(chapter);
   });
@@ -1692,42 +1887,6 @@ function shuffle(list, randomFn = Math.random) {
     [copy[index], copy[swapIndex]] = [copy[swapIndex], copy[index]];
   }
   return copy;
-}
-
-function renderLevelButtons() {
-  const chapter = getCurrentChapter();
-  elements.levelGrid.innerHTML = "";
-
-  for (let level = 1; level <= 10; level += 1) {
-    const bestScore = progress[chapter.id]?.levels?.[level]?.bestScore;
-    const isCompleted = Boolean(progress[chapter.id]?.levels?.[level]?.completed);
-    const button = document.createElement("button");
-    button.className = `level-button ${state.selectedLevel === level ? "active" : ""}`;
-    button.innerHTML = `
-      <strong>Level ${level}</strong>
-      <span class="level-meta">${isCompleted ? `Done | Best: ${bestScore}/10` : "10 questions"}</span>
-    `;
-    button.addEventListener("click", () => {
-      state.selectedLevel = level;
-      renderLevelButtons();
-      resetQuiz();
-    });
-    elements.levelGrid.appendChild(button);
-  }
-}
-
-function moveToNextLevel() {
-  if (state.selectedLevel < 10) {
-    state.selectedLevel += 1;
-    renderLevelButtons();
-    resetQuiz();
-  }
-}
-
-function getCurrentLevelQuestions() {
-  const chapter = getCurrentChapter();
-  const start = (state.selectedLevel - 1) * 10;
-  return chapter.questionBank.slice(start, start + 10);
 }
 
 function buildQuestionBank(chapter) {
@@ -1866,15 +2025,12 @@ function normalizeText(text) {
 
 function saveFlashcardProgress() {
   const chapter = getCurrentChapter();
-  if (!progress[chapter.id]) {
-    progress[chapter.id] = { levels: {}, flashcardsViewed: 0 };
-  }
-
-  progress[chapter.id].flashcardsViewed = Math.max(
-    progress[chapter.id].flashcardsViewed || 0,
-    state.flashcardIndex + 1
-  );
+  const chapterProgress = ensureChapterProgress(chapter.id);
+  chapterProgress.flashcardsViewed = Math.max(chapterProgress.flashcardsViewed || 0, state.flashcardIndex + 1);
   saveProgress();
+  saveUiState();
   renderCurrentChapterCard();
   updateProgressPanel();
+  renderSavedProgressList();
 }
+
