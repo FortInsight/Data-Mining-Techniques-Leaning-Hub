@@ -1294,6 +1294,7 @@ enrichChapters();
 
 const state = {
   chapterIndex: 0,
+  activeTab: "quiz",
   flashcardIndex: 0,
   flashcardFlipped: false,
   selectedLevel: 1,
@@ -1311,16 +1312,16 @@ const elements = {
   jumpFlashcardsButton: document.getElementById("jump-flashcards-button"),
   jumpQuizButton: document.getElementById("jump-quiz-button"),
   jumpProgressButton: document.getElementById("jump-progress-button"),
+  tabQuiz: document.getElementById("tab-quiz"),
+  tabFlashcards: document.getElementById("tab-flashcards"),
   chaptersSection: document.getElementById("chapters-section"),
   flashcardsSection: document.getElementById("flashcards-section"),
   quizSection: document.getElementById("quiz-section"),
-  chapterList: document.getElementById("chapter-list"),
+  chapterSelect: document.getElementById("chapter-select"),
+  chapterCurrentCard: document.getElementById("chapter-current-card"),
   completedCount: document.getElementById("completed-count"),
   currentChapterLabel: document.getElementById("current-chapter-label"),
   bestScoreLabel: document.getElementById("best-score-label"),
-  chapterTitle: document.getElementById("chapter-title"),
-  chapterPageRange: document.getElementById("chapter-page-range"),
-  chapterSummary: document.getElementById("chapter-summary"),
   levelGrid: document.getElementById("level-grid"),
   flashcard: document.getElementById("flashcard"),
   flashcardFrontText: document.getElementById("flashcard-front-text"),
@@ -1346,17 +1347,24 @@ const elements = {
 init();
 
 function init() {
-  renderChapterButtons();
+  renderChapterSelector();
   attachEvents();
+  renderTabs();
   renderChapter();
   updateProgressPanel();
+  registerServiceWorker();
 }
 
 function attachEvents() {
   elements.jumpChaptersButton.addEventListener("click", () => scrollToSection(elements.chaptersSection));
-  elements.jumpFlashcardsButton.addEventListener("click", () => scrollToSection(elements.flashcardsSection));
-  elements.jumpQuizButton.addEventListener("click", () => scrollToSection(elements.quizSection));
+  elements.jumpFlashcardsButton.addEventListener("click", () => activateTab("flashcards"));
+  elements.jumpQuizButton.addEventListener("click", () => activateTab("quiz"));
   elements.jumpProgressButton.addEventListener("click", () => scrollToSection(elements.chaptersSection));
+  elements.chapterSelect.addEventListener("change", (event) => {
+    selectChapter(Number(event.target.value));
+  });
+  elements.tabQuiz.addEventListener("click", () => activateTab("quiz"));
+  elements.tabFlashcards.addEventListener("click", () => activateTab("flashcards"));
   elements.prevCardButton.addEventListener("click", () => moveFlashcard(-1));
   elements.nextCardButton.addEventListener("click", () => moveFlashcard(1));
   elements.flashcard.addEventListener("click", flipFlashcard);
@@ -1365,21 +1373,25 @@ function attachEvents() {
   elements.nextLevelButton.addEventListener("click", moveToNextLevel);
 }
 
-function renderChapterButtons() {
-  elements.chapterList.innerHTML = "";
+function renderChapterSelector() {
+  elements.chapterSelect.innerHTML = chapters
+    .map((chapter, index) => `<option value="${index}">Chapter ${chapter.id}: ${chapter.title}</option>`)
+    .join("");
 
-  chapters.forEach((chapter, index) => {
-    const button = document.createElement("button");
-    const completedLevels = Object.keys(progress[chapter.id]?.levels || {}).length;
-    button.className = `chapter-button ${index === state.chapterIndex ? "active" : ""}`;
-    button.innerHTML = `
-      <strong>Chapter ${chapter.id}</strong>
-      <span>${chapter.title}</span>
-      <span class="chapter-meta">${completedLevels > 0 ? `${completedLevels}/10 levels completed` : "No levels completed yet"}</span>
-    `;
-    button.addEventListener("click", () => selectChapter(index));
-    elements.chapterList.appendChild(button);
-  });
+  renderCurrentChapterCard();
+}
+
+function renderCurrentChapterCard() {
+  const chapter = getCurrentChapter();
+  const completedLevels = Object.keys(progress[chapter.id]?.levels || {}).length;
+  const viewedCards = progress[chapter.id]?.flashcardsViewed || 0;
+  elements.chapterSelect.value = String(state.chapterIndex);
+  elements.chapterCurrentCard.className = "chapter-button active";
+  elements.chapterCurrentCard.innerHTML = `
+    <strong>Chapter ${chapter.id}</strong>
+    <span>${chapter.title}</span>
+    <span class="chapter-meta">${completedLevels > 0 ? `${completedLevels}/10 levels completed` : "No levels completed yet"} | Cards viewed: ${viewedCards}</span>
+  `;
 }
 
 function selectChapter(index) {
@@ -1388,19 +1400,33 @@ function selectChapter(index) {
   state.flashcardFlipped = false;
   state.selectedLevel = 1;
   resetQuiz();
-  renderChapterButtons();
+  renderCurrentChapterCard();
   renderChapter();
   updateProgressPanel();
 }
 
 function renderChapter() {
-  const chapter = getCurrentChapter();
-  elements.chapterTitle.textContent = `Chapter ${chapter.id}: ${chapter.title}`;
-  elements.chapterPageRange.textContent = chapter.pages;
-  elements.chapterSummary.textContent = chapter.summary;
   renderLevelButtons();
   renderQuiz();
   renderFlashcard();
+}
+
+function renderTabs() {
+  elements.tabQuiz.classList.toggle("active", state.activeTab === "quiz");
+  elements.tabFlashcards.classList.toggle("active", state.activeTab === "flashcards");
+  elements.quizSection.classList.toggle("hidden", state.activeTab !== "quiz");
+  elements.flashcardsSection.classList.toggle("hidden", state.activeTab !== "flashcards");
+}
+
+function activateTab(tab) {
+  state.activeTab = tab;
+  renderTabs();
+
+  if (tab === "quiz") {
+    scrollToSection(elements.quizSection);
+  } else if (tab === "flashcards") {
+    scrollToSection(elements.flashcardsSection);
+  }
 }
 
 function renderFlashcard() {
@@ -1422,6 +1448,9 @@ function moveFlashcard(direction) {
 
 function flipFlashcard() {
   state.flashcardFlipped = !state.flashcardFlipped;
+  if (state.flashcardFlipped) {
+    saveFlashcardProgress();
+  }
   renderFlashcard();
 }
 
@@ -1446,6 +1475,7 @@ function renderQuiz() {
       elements.quizQuestion.textContent = "Pick one level above to start your 10-question quiz set.";
       elements.quizOptions.innerHTML = "";
       elements.quizFeedback.className = "quiz-feedback hidden";
+      elements.quizFeedback.innerHTML = "";
       elements.nextQuestionButton.classList.add("hidden");
       elements.quizProgressBar.style.width = "0";
       return;
@@ -1460,6 +1490,7 @@ function renderQuiz() {
   elements.quizQuestion.textContent = question.question;
   elements.quizOptions.innerHTML = "";
   elements.quizFeedback.className = "quiz-feedback hidden";
+  elements.quizFeedback.innerHTML = "";
   elements.nextQuestionButton.classList.add("hidden");
 
   question.options.forEach((option, optionIndex) => {
@@ -1504,14 +1535,15 @@ function checkAnswer(selectedIndex) {
   });
 
   elements.quizScorePill.textContent = `Score: ${state.quizScore}`;
-  elements.quizFeedback.className = "quiz-feedback";
+  elements.quizFeedback.className = `quiz-feedback ${isCorrect ? "correct" : "wrong"}`;
   elements.quizFeedback.innerHTML = `
     <div class="feedback-head">
       <span class="feedback-emoji">${isCorrect ? "🎉" : "📘"}</span>
-      <strong>${isCorrect ? "Correct answer" : "Review this concept"}</strong>
+      <strong>${isCorrect ? "Correct answer" : "Wrong answer"}</strong>
     </div>
     <div>${question.explanation}</div>
   `;
+  elements.quizFeedback.querySelector(".feedback-emoji").textContent = isCorrect ? "🎉" : "📕";
   elements.nextQuestionButton.textContent = state.quizIndex === state.quizQuestions.length - 1 ? "See Results" : "Next Question";
   elements.nextQuestionButton.classList.remove("hidden");
 }
@@ -1559,19 +1591,21 @@ function renderQuizResults() {
     </div>
   `).join("");
 
-  renderChapterButtons();
+  renderCurrentChapterCard();
+  renderLevelButtons();
   updateProgressPanel();
 }
 
 function updateProgressPanel() {
   const chapter = getCurrentChapter();
-  const completed = Object.values(progress).filter((item) => Object.keys(item.levels || {}).length > 0).length;
+  const completed = Object.values(progress).reduce((total, item) => total + Object.keys(item.levels || {}).length, 0);
   const chapterLevels = progress[chapter.id]?.levels || {};
   const bestScore = Object.values(chapterLevels).reduce((best, level) => Math.max(best, level.bestScore || 0), 0);
+  const viewedCards = progress[chapter.id]?.flashcardsViewed || 0;
 
-  elements.completedCount.textContent = `${completed} / ${chapters.length}`;
+  elements.completedCount.textContent = `${completed} / ${chapters.length * 10}`;
   elements.currentChapterLabel.textContent = `Chapter ${chapter.id}`;
-  elements.bestScoreLabel.textContent = bestScore ? `${bestScore}/10` : "Not yet";
+  elements.bestScoreLabel.textContent = bestScore ? `Best level score ${bestScore}/10 | Cards viewed ${viewedCards}` : viewedCards ? `Cards viewed ${viewedCards}` : "No activity yet";
 }
 
 function getCurrentChapter() {
@@ -1598,6 +1632,16 @@ function scrollToSection(element) {
   element.scrollIntoView({
     behavior: "smooth",
     block: "start"
+  });
+}
+
+function registerServiceWorker() {
+  if (!("serviceWorker" in navigator)) {
+    return;
+  }
+
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("./service-worker.js").catch(() => {});
   });
 }
 
@@ -1656,11 +1700,12 @@ function renderLevelButtons() {
 
   for (let level = 1; level <= 10; level += 1) {
     const bestScore = progress[chapter.id]?.levels?.[level]?.bestScore;
+    const isCompleted = Boolean(progress[chapter.id]?.levels?.[level]?.completed);
     const button = document.createElement("button");
     button.className = `level-button ${state.selectedLevel === level ? "active" : ""}`;
     button.innerHTML = `
       <strong>Level ${level}</strong>
-      <span class="level-meta">${bestScore ? `Best: ${bestScore}/10` : "10 questions"}</span>
+      <span class="level-meta">${isCompleted ? `Done | Best: ${bestScore}/10` : "10 questions"}</span>
     `;
     button.addEventListener("click", () => {
       state.selectedLevel = level;
@@ -1716,13 +1761,13 @@ function generateQuestion(chapter, level, offset) {
 
   if (template === 1) {
     const options = shuffle([
-      focus.purpose,
-      ...pickFactDistractors(chapter, focus.concept, "purpose", 3)
+      `${focus.concept}: ${focus.purpose}`,
+      ...pickFactStatementDistractors(chapter, focus.concept, "purpose", 3)
     ], seed);
     return {
-      question: `Why is ${focus.concept} important in data mining?`,
+      question: `Which statement correctly explains why ${focus.concept} matters?`,
       options,
-      answerIndex: options.indexOf(focus.purpose),
+      answerIndex: options.indexOf(`${focus.concept}: ${focus.purpose}`),
       explanation: `${focus.concept} matters because it helps ${focus.purpose}.`
     };
   }
@@ -1741,15 +1786,15 @@ function generateQuestion(chapter, level, offset) {
   }
 
   if (template === 3) {
-    const options = shuffle([
-      focus.purpose,
-      ...pickFactDistractors(chapter, focus.concept, "purpose", 3)
+    const conceptOptions = shuffle([
+      focus.concept,
+      ...pickFactConceptDistractors(chapter, focus.concept, 3)
     ], seed);
     return {
-      question: `A student wants to understand the main role of ${focus.concept}. Which answer is best?`,
-      options,
-      answerIndex: options.indexOf(focus.purpose),
-      explanation: `The best answer is that ${focus.concept} helps ${focus.purpose}.`
+      question: `A student wants to learn the idea used to ${focus.purpose}. Which concept should they study?`,
+      options: conceptOptions,
+      answerIndex: conceptOptions.indexOf(focus.concept),
+      explanation: `The correct concept is ${focus.concept}, because its role is to ${focus.purpose}.`
     };
   }
 
@@ -1773,6 +1818,17 @@ function pickFactDistractors(chapter, concept, field, count) {
     .flatMap((item) => item.facts || [])
     .filter((fact) => fact.concept !== concept)
     .map((fact) => fact[field]);
+  return uniqueSlice([...localPool, ...globalPool], count);
+}
+
+function pickFactStatementDistractors(chapter, concept, field, count) {
+  const localPool = (chapter.facts || [])
+    .filter((fact) => fact.concept !== concept)
+    .map((fact) => `${fact.concept}: ${fact[field]}`);
+  const globalPool = chapters
+    .flatMap((item) => item.facts || [])
+    .filter((fact) => fact.concept !== concept)
+    .map((fact) => `${fact.concept}: ${fact[field]}`);
   return uniqueSlice([...localPool, ...globalPool], count);
 }
 
@@ -1806,4 +1862,19 @@ function uniqueSlice(list, count) {
 
 function normalizeText(text) {
   return String(text).trim().toLowerCase();
+}
+
+function saveFlashcardProgress() {
+  const chapter = getCurrentChapter();
+  if (!progress[chapter.id]) {
+    progress[chapter.id] = { levels: {}, flashcardsViewed: 0 };
+  }
+
+  progress[chapter.id].flashcardsViewed = Math.max(
+    progress[chapter.id].flashcardsViewed || 0,
+    state.flashcardIndex + 1
+  );
+  saveProgress();
+  renderCurrentChapterCard();
+  updateProgressPanel();
 }

@@ -1,0 +1,24 @@
+{
+  "name": "Data Mining Interactive Textbook",
+  "short_name": "Data Mining",
+  "description": "Interactive chapter study app with quizzes and flashcards for Data Mining concepts.",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#0b1f3a",
+  "theme_color": "#0b1f3a",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "./icon-192.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "./icon-512.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

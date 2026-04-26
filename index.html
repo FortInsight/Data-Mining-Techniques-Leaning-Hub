@@ -4,6 +4,11 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Data Mining Interactive Textbook</title>
+  <meta name="theme-color" content="#0b1f3a" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="icon" href="icon-192.svg" type="image/svg+xml" />
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
@@ -41,38 +46,36 @@
           <h2>Chapters</h2>
           <p>Choose a chapter to start learning.</p>
         </div>
-        <div id="chapter-list" class="chapter-list"></div>
+        <div class="chapter-select-wrap">
+          <select id="chapter-select" class="chapter-select"></select>
+          <span class="chapter-select-arrow" aria-hidden="true">▼</span>
+        </div>
+        <div id="chapter-current-card" class="chapter-current-card"></div>
 
         <div class="progress-card">
           <h3>Progress</h3>
           <div class="progress-row">
-            <span>Completed quizzes</span>
-            <strong id="completed-count">0 / 13</strong>
+            <span>Completed levels</span>
+            <strong id="completed-count">0 / 130</strong>
           </div>
           <div class="progress-row">
             <span>Current chapter</span>
             <strong id="current-chapter-label">Chapter 1</strong>
           </div>
           <div class="progress-row">
-            <span>Best score</span>
-            <strong id="best-score-label">Not yet</strong>
+            <span>Saved study</span>
+            <strong id="best-score-label">No activity yet</strong>
           </div>
         </div>
       </aside>
 
       <section class="content">
-        <section class="card chapter-card">
-          <div class="section-heading">
-            <h2 id="chapter-title">Chapter 1: Introduction</h2>
-            <p id="chapter-page-range">Textbook chapter coverage</p>
-          </div>
+        <div class="tab-bar card">
+          <button id="tab-quiz" class="tab-button active" type="button">Quiz</button>
+          <button id="tab-flashcards" class="tab-button" type="button">Flashcards</button>
+        </div>
 
-          <div class="chapter-summary">
-            <p id="chapter-summary"></p>
-          </div>
-        </section>
-
-        <section id="quiz-section" class="card quiz-card">
+        <section id="quiz-section" class="card quiz-card tab-panel">
           <div class="section-heading">
             <h2>Chapter Quiz</h2>
             <p>Each chapter has 10 levels and 100 total questions. Start at Level 1 and work upward.</p>
@@ -95,13 +98,15 @@
             <div id="quiz-progress-bar" class="progress-bar"></div>
           </div>
 
-          <div id="quiz-panel">
-            <h3 id="quiz-question" class="quiz-question"></h3>
-            <div id="quiz-options" class="quiz-options"></div>
-            <div id="quiz-feedback" class="quiz-feedback hidden"></div>
-            <div class="quiz-actions">
-              <button id="next-question-button" class="primary-button hidden">Next Question</button>
+          <div id="quiz-panel" class="quiz-panel">
+            <div class="quiz-main-column">
+              <h3 id="quiz-question" class="quiz-question"></h3>
+              <div id="quiz-options" class="quiz-options"></div>
+              <div class="quiz-actions">
+                <button id="next-question-button" class="primary-button hidden">Next Question</button>
+              </div>
             </div>
+            <aside id="quiz-feedback" class="quiz-feedback hidden"></aside>
           </div>
 
           <div id="quiz-results" class="hidden">
@@ -114,7 +119,7 @@
           </div>
         </section>
 
-        <section id="flashcards-section" class="card">
+        <section id="flashcards-section" class="card tab-panel hidden">
           <div class="section-heading">
             <h2>Flashcards</h2>
             <p>Flip cards to study definitions, why they matter, and textbook-style examples.</p>
