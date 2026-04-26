@@ -3,83 +3,60 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Data Mining Quiz</title>
-  <meta name="theme-color" content="#0b1f3a" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-  <link rel="manifest" href="manifest.webmanifest" />
-  <link rel="icon" href="icon-192.svg" type="image/svg+xml" />
+  <title>Quiz Page</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
+
 <body data-page="quiz">
   <div class="app-shell">
+
     <header class="page-header card">
       <div>
         <p class="eyebrow">Quiz Page</p>
-        <h1>Chapter Quiz Practice</h1>
-        <p class="hero-text">
-          This page is larger on purpose so the quiz is easier to read, answer, and review.
-        </p>
+        <h1>Quiz Practice</h1>
+        <p class="hero-text">Choose a level and begin practicing.</p>
       </div>
       <div class="header-actions">
-        <a class="quick-link" href="index.html">Back to Chapters</a>
         <a class="quick-link" href="flashcards.html">Go to Flashcards</a>
       </div>
     </header>
 
     <main class="page-layout">
+
+      <!-- LEFT NAV -->
       <aside class="nav-panel card">
         <div class="section-heading">
           <h2>Navigator</h2>
-          <p>Move between the three app pages here.</p>
+          <p>Move between the two study modes.</p>
         </div>
 
         <nav class="nav-links">
-          <a class="nav-link" data-nav="home" href="index.html">Chapters &amp; Progress</a>
-          <a class="nav-link" data-nav="quiz" href="quiz.html">Quiz Page</a>
-          <a class="nav-link" data-nav="flashcards" href="flashcards.html">Flashcards Page</a>
+          <button id="open-levels" class="nav-link" style="width:100%; text-align:left;">
+            Quiz Page (Levels)
+          </button>
+          <a class="nav-link" href="flashcards.html">Flashcards Page</a>
         </nav>
-
-        <div class="section-heading compact">
-          <h3>Choose Chapter</h3>
-          <p>Switch chapter and keep practicing here.</p>
-        </div>
-        <div class="chapter-select-wrap">
-          <select id="chapter-select" class="chapter-select"></select>
-          <span class="chapter-select-arrow" aria-hidden="true">&#9662;</span>
-        </div>
-        <div id="chapter-current-card" class="chapter-current-card"></div>
-
-        <div class="progress-card">
-          <h3>Saved Progress</h3>
-          <div class="progress-row">
-            <span>Completed levels</span>
-            <strong id="completed-count">0 / 130</strong>
-          </div>
-          <div class="progress-row">
-            <span>Current chapter</span>
-            <strong id="current-chapter-label">Chapter 1</strong>
-          </div>
-          <div class="progress-row">
-            <span>Saved study</span>
-            <strong id="best-score-label">No activity yet</strong>
-          </div>
-        </div>
       </aside>
 
+      <!-- MAIN QUIZ AREA -->
       <section class="page-main">
         <section class="card quiz-page-card">
+
           <div class="section-heading">
-            <h2>Chapter Quiz</h2>
-            <p>Each chapter has 10 levels and 100 questions in total. Higher levels get more complex.</p>
+            <h2>Quiz Levels</h2>
+            <p>10 levels per chapter. Increasing difficulty.</p>
           </div>
 
+          <!-- COLLAPSIBLE LEVEL DROPDOWN -->
           <div class="quiz-level-box">
-            <div class="quiz-level-head">
-              <h3>Choose Quiz Level</h3>
-              <p>Select one level at a time. Completed levels stay saved.</p>
+            <button class="collapse-toggle" type="button">
+              Choose Quiz Level
+              <span class="arrow">&#9662;</span>
+            </button>
+
+            <div id="level-grid" class="level-grid collapsible">
+              <!-- Levels injected by app.js -->
             </div>
-            <div id="level-grid" class="level-grid"></div>
           </div>
 
           <div class="quiz-toolbar">
@@ -110,11 +87,48 @@
               <button id="next-level-button" class="primary-button" type="button">Next Level</button>
             </div>
           </div>
+
         </section>
       </section>
     </main>
   </div>
 
   <script src="app.js"></script>
+
+  <!-- COLLAPSIBLE CSS -->
+  <style>
+    .collapsible { max-height: 0; overflow: hidden; transition: max-height 0.35s ease; }
+    .collapsible.open { max-height: 1000px; }
+    .collapse-toggle {
+      width: 100%; background: #0b1f3a; color: #fff; padding: 12px 16px;
+      font-size: 1.1rem; border: none; border-radius: 6px;
+      display: flex; justify-content: space-between; align-items: center;
+      cursor: pointer; margin-bottom: 8px;
+    }
+    .collapse-toggle .arrow { transition: transform 0.3s ease; }
+    .collapse-toggle.active .arrow { transform: rotate(180deg); }
+    .level-grid .level-button { margin: 6px 0 !important; width: 100%; }
+  </style>
+
+  <!-- COLLAPSIBLE JS -->
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const toggle = document.querySelector(".collapse-toggle");
+      const grid = document.querySelector("#level-grid");
+      const openLevels = document.querySelector("#open-levels");
+
+      toggle.addEventListener("click", () => {
+        toggle.classList.toggle("active");
+        grid.classList.toggle("open");
+      });
+
+      openLevels.addEventListener("click", () => {
+        toggle.classList.add("active");
+        grid.classList.add("open");
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      });
+    });
+  </script>
+
 </body>
 </html>
