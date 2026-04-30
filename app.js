@@ -334,7 +334,7 @@ const chapters = [
         explanation: "Ranking cubes are designed to support efficient top-k and ranking analytics."
       },
       {
-        question: "Which chapter theme best matches data cube technology?",
+        question: "Which statement best describes data cube technology?",
         options: [
           "Scalable multidimensional aggregation and exploration",
           "Only image compression",
@@ -342,7 +342,7 @@ const chapters = [
           "Only sequence mining"
         ],
         answerIndex: 0,
-        explanation: "This chapter focuses on how to compute, store, and explore multidimensional cube structures efficiently."
+        explanation: "Data cube technology focuses on computing, storing, and exploring multidimensional cube structures efficiently."
       }
     ]
   },
@@ -481,7 +481,7 @@ const chapters = [
         explanation: "Compressed pattern mining seeks concise but informative pattern sets."
       },
       {
-        question: "Which chapter idea best describes advanced pattern mining?",
+        question: "Which statement best describes advanced pattern mining?",
         options: [
           "Extending pattern mining to richer spaces and constraints",
           "Only storing transactions",
@@ -489,7 +489,7 @@ const chapters = [
           "Only sorting arrays"
         ],
         answerIndex: 0,
-        explanation: "The chapter generalizes basic frequent pattern mining to more challenging settings."
+        explanation: "Advanced pattern mining generalizes basic frequent pattern mining to more challenging settings."
       }
     ]
   },
@@ -608,10 +608,10 @@ const chapters = [
         explanation: "k-NN stores data and performs learning mainly when a new query arrives."
       },
       {
-        question: "Which topic appears as an advanced issue in this chapter?",
+        question: "Which topic appears as an advanced issue in this section on classification methods?",
         options: ["Transfer learning", "Bitmap join indexing", "Snowflake schema design", "Wavelet compression only"],
         answerIndex: 0,
-        explanation: "The chapter includes additional topics such as multiclass, semi-supervised, active, and transfer learning."
+        explanation: "This section includes additional topics such as multiclass, semi-supervised, active, and transfer learning."
       }
     ]
   },
@@ -877,7 +877,7 @@ const chapters = [
         explanation: "Research frontiers reveal new directions, challenges, and opportunities in the field."
       },
       {
-        question: "What broad message does this chapter give?",
+        question: "What broad message does the final discussion give about data mining?",
         options: [
           "Data mining keeps expanding in methods, applications, and societal importance",
           "Data mining is already complete and finished",
@@ -885,7 +885,7 @@ const chapters = [
           "Future research is unnecessary"
         ],
         answerIndex: 0,
-        explanation: "The final chapter highlights continued growth in methods, applications, and research questions."
+        explanation: "The final discussion highlights continued growth in methods, applications, and research questions."
       }
     ]
   }
@@ -1290,8 +1290,11 @@ const chapterFacts = {
   ]
 };
 
+<<<<<<< HEAD
 enrichChapters();
 
+=======
+>>>>>>> db1b2cb (m)
 const uiStateKey = "data-mining-interactive-textbook-ui-v1";
 const savedUiState = loadUiState();
 const state = {
@@ -1322,6 +1325,11 @@ const elements = {
   chapterTopics: document.getElementById("chapter-topics"),
   savedProgressList: document.getElementById("saved-progress-list"),
   savedProgressEmpty: document.getElementById("saved-progress-empty"),
+<<<<<<< HEAD
+=======
+  toggleLevelPanelButton: document.getElementById("toggle-level-panel-button"),
+  levelPanelContent: document.getElementById("level-panel-content"),
+>>>>>>> db1b2cb (m)
   levelGrid: document.getElementById("level-grid"),
   quizStatus: document.getElementById("quiz-status"),
   quizScorePill: document.getElementById("quiz-score-pill"),
@@ -1337,14 +1345,17 @@ const elements = {
   retryQuizButton: document.getElementById("retry-quiz-button"),
   nextLevelButton: document.getElementById("next-level-button"),
   flashcard: document.getElementById("flashcard"),
+<<<<<<< HEAD
+=======
+  flashcardFrontFace: document.querySelector(".flashcard-front"),
+  flashcardBackFace: document.querySelector(".flashcard-back"),
+>>>>>>> db1b2cb (m)
   flashcardFrontText: document.getElementById("flashcard-front-text"),
   flashcardBackText: document.getElementById("flashcard-back-text"),
   cardPosition: document.getElementById("card-position"),
   prevCardButton: document.getElementById("prev-card-button"),
   nextCardButton: document.getElementById("next-card-button")
 };
-
-init();
 
 function init() {
   attachEvents();
@@ -1366,6 +1377,13 @@ function attachEvents() {
     });
   }
 
+<<<<<<< HEAD
+=======
+  if (elements.toggleLevelPanelButton) {
+    elements.toggleLevelPanelButton.addEventListener("click", toggleLevelPanel);
+  }
+
+>>>>>>> db1b2cb (m)
   if (elements.prevCardButton) {
     elements.prevCardButton.addEventListener("click", () => moveFlashcard(-1));
   }
@@ -1533,6 +1551,7 @@ function renderFlashcardPage() {
   elements.flashcardFrontText.textContent = card.front;
   elements.flashcardBackText.textContent = card.back;
   elements.cardPosition.textContent = `Card ${state.flashcardIndex + 1} of ${chapter.flashcards.length}`;
+  syncFlashcardHeight();
 }
 
 function moveFlashcard(direction) {
@@ -1551,11 +1570,31 @@ function flipFlashcard() {
   renderFlashcardPage();
 }
 
+<<<<<<< HEAD
+=======
+function syncFlashcardHeight() {
+  if (!elements.flashcard || !elements.flashcardFrontFace || !elements.flashcardBackFace) {
+    return;
+  }
+
+  window.requestAnimationFrame(() => {
+    const minimumHeight = window.innerWidth <= 760 ? 500 : 420;
+    const frontHeight = elements.flashcardFrontFace.scrollHeight;
+    const backHeight = elements.flashcardBackFace.scrollHeight;
+    elements.flashcard.style.height = `${Math.max(minimumHeight, frontHeight, backHeight)}px`;
+  });
+}
+
+>>>>>>> db1b2cb (m)
 function renderQuizPage() {
   if (!elements.levelGrid) {
     return;
   }
 
+<<<<<<< HEAD
+=======
+  syncLevelPanelState();
+>>>>>>> db1b2cb (m)
   renderLevelButtons();
   if (!state.quizQuestions.length) {
     resetQuiz();
@@ -1573,6 +1612,10 @@ function startLevel(level) {
   state.quizResults = [];
   saveUiState();
   renderLevelButtons();
+<<<<<<< HEAD
+=======
+  setLevelPanelCollapsed(true);
+>>>>>>> db1b2cb (m)
   resetQuiz();
   if (elements.quizQuestion) {
     elements.quizQuestion.scrollIntoView({
@@ -1752,6 +1795,36 @@ function renderLevelButtons() {
   }
 }
 
+<<<<<<< HEAD
+=======
+function toggleLevelPanel() {
+  if (!elements.levelPanelContent) {
+    return;
+  }
+
+  const isCollapsed = elements.levelPanelContent.classList.contains("collapsed");
+  setLevelPanelCollapsed(!isCollapsed);
+}
+
+function setLevelPanelCollapsed(collapsed) {
+  if (!elements.levelPanelContent || !elements.toggleLevelPanelButton) {
+    return;
+  }
+
+  elements.levelPanelContent.classList.toggle("collapsed", collapsed);
+  elements.toggleLevelPanelButton.textContent = collapsed ? "Show Levels" : "Hide Levels";
+  elements.toggleLevelPanelButton.setAttribute("aria-expanded", String(!collapsed));
+}
+
+function syncLevelPanelState() {
+  if (!elements.levelPanelContent) {
+    return;
+  }
+
+  setLevelPanelCollapsed(true);
+}
+
+>>>>>>> db1b2cb (m)
 function moveToNextLevel() {
   if (state.selectedLevel < 10) {
     startLevel(state.selectedLevel + 1);
@@ -1843,33 +1916,38 @@ function enrichChapters() {
   chapters.forEach((chapter) => {
     chapter.subtopics = chapterCoverage[chapter.id] || chapter.topics;
     chapter.facts = chapterFacts[chapter.id] || [];
+    chapter.studyItems = buildStudyItems(chapter);
   });
 
   chapters.forEach((chapter) => {
-    const factCards = chapter.facts.map((fact) => ({
+    const factCards = chapter.studyItems.map((fact) => ({
       front: `Explain ${fact.concept}.`,
-      back: `${fact.concept.toUpperCase()}\n\nMeaning: ${fact.definition}.\n\nWhy it matters: ${fact.purpose}.\n\nExample: ${fact.example}.\n\nChapter link: This is a core idea from Chapter ${chapter.id}: ${chapter.title}.`
+      back: `${fact.concept.toUpperCase()}\n\nMeaning: ${fact.definition}.\n\nWhy it matters: ${fact.purpose}.\n\nExample: ${fact.example}.\n\nStudy link: This is a core idea in the book section "${chapter.title}".`
     }));
 
-    const generatedFlashcards = chapter.subtopics.slice(0, 8).map((topic, index) => ({
-      front: `How does Chapter ${chapter.id} explain "${topic}"?`,
+    const generatedFlashcards = chapter.subtopics.map((topic, index) => ({
+      front: `How would you explain "${topic}"?`,
       back: buildTopicExplanation(chapter, topic, index)
     }));
 
+<<<<<<< HEAD
     chapter.flashcards = [...chapter.flashcards, ...factCards, ...generatedFlashcards];
+=======
+    chapter.flashcards = dedupeFlashcards([...chapter.flashcards, ...factCards, ...generatedFlashcards]);
+>>>>>>> db1b2cb (m)
     chapter.questionBank = buildQuestionBank(chapter);
   });
 }
 
 function buildTopicExplanation(chapter, topic, index) {
-  const matchingFact = (chapter.facts || []).find((fact) => normalizeText(fact.concept) === normalizeText(topic));
+  const matchingFact = (chapter.studyItems || []).find((fact) => normalizeText(fact.concept) === normalizeText(topic));
   if (matchingFact) {
-    return `${matchingFact.concept.toUpperCase()}\n\nMeaning: ${matchingFact.definition}.\n\nWhy it matters: ${matchingFact.purpose}.\n\nExample: ${matchingFact.example}.\n\nStudy tip: Connect this idea back to the full chapter theme "${chapter.title}".`;
+    return `${matchingFact.concept.toUpperCase()}\n\nMeaning: ${matchingFact.definition}.\n\nWhy it matters: ${matchingFact.purpose}.\n\nExample: ${matchingFact.example}.\n\nStudy tip: Connect this idea back to the full book section theme "${chapter.title}".`;
   }
 
   const summarySentences = chapter.summary.split(". ").filter(Boolean);
   const selectedSentence = summarySentences[index % summarySentences.length] || chapter.summary;
-  return `${topic.toUpperCase()}\n\nThis topic is included in Chapter ${chapter.id} because ${selectedSentence.replace(/\.$/, "")}.\n\nUse this card to remember where the topic fits before taking the quiz.`;
+  return `${topic.toUpperCase()}\n\nThis topic matters because ${selectedSentence.replace(/\.$/, "")}.\n\nUse this card to remember the idea before taking the quiz.`;
 }
 
 function createSeededRandom(seed) {
@@ -1891,116 +1969,245 @@ function shuffle(list, randomFn = Math.random) {
 
 function buildQuestionBank(chapter) {
   const bank = [];
+  const seenQuestions = new Set();
   for (let level = 1; level <= 10; level += 1) {
     for (let offset = 0; offset < 10; offset += 1) {
-      bank.push(generateQuestion(chapter, level, offset));
+      const question = generateQuestion(chapter, level, offset, seenQuestions);
+      bank.push(question);
+      seenQuestions.add(normalizeText(question.question));
     }
   }
   return bank;
 }
 
-function generateQuestion(chapter, level, offset) {
-  const facts = chapter.facts;
-  const focus = facts[((level - 1) * 10 + offset) % facts.length];
+function generateQuestion(chapter, level, offset, seenQuestions = new Set()) {
+  const facts = chapter.studyItems || chapter.facts || [];
+  const startIndex = ((level - 1) * 10 + offset) % facts.length;
   const seed = createSeededRandom(chapter.id * 1000 + level * 50 + offset);
-  const template = (level + offset) % 5;
+  const templateIndex = (level + offset) % questionTemplates.length;
 
-  if (template === 0) {
-    const options = shuffle([
-      focus.definition,
-      ...pickFactDistractors(chapter, focus.concept, "definition", 3)
-    ], seed);
-    return {
-      question: `Which statement best describes ${focus.concept}?`,
-      options,
-      answerIndex: options.indexOf(focus.definition),
-      explanation: `${focus.concept} is defined as ${focus.definition}.`
-    };
+  for (let shift = 0; shift < facts.length; shift += 1) {
+    const focus = facts[(startIndex + shift) % facts.length];
+    for (let attempt = 0; attempt < questionTemplates.length; attempt += 1) {
+      const builder = questionTemplates[(templateIndex + attempt) % questionTemplates.length];
+      const candidate = finalizeQuestion(builder(chapter, focus, level, offset, seed));
+      if (!seenQuestions.has(normalizeText(candidate.question))) {
+        return candidate;
+      }
+    }
   }
 
-  if (template === 1) {
-    const options = shuffle([
-      `${focus.concept}: ${focus.purpose}`,
-      ...pickFactStatementDistractors(chapter, focus.concept, "purpose", 3)
-    ], seed);
-    return {
-      question: `Which statement correctly explains why ${focus.concept} matters?`,
-      options,
-      answerIndex: options.indexOf(`${focus.concept}: ${focus.purpose}`),
-      explanation: `${focus.concept} matters because it helps ${focus.purpose}.`
-    };
-  }
-
-  if (template === 2) {
-    const conceptOptions = shuffle([
-      focus.concept,
-      ...pickFactConceptDistractors(chapter, focus.concept, 3)
-    ], seed);
-    return {
-      question: `Which concept matches this description: ${focus.definition}?`,
-      options: conceptOptions,
-      answerIndex: conceptOptions.indexOf(focus.concept),
-      explanation: `${focus.concept} is the concept defined as ${focus.definition}.`
-    };
-  }
-
-  if (template === 3) {
-    const conceptOptions = shuffle([
-      focus.concept,
-      ...pickFactConceptDistractors(chapter, focus.concept, 3)
-    ], seed);
-    return {
-      question: `A student wants to learn the idea used to ${focus.purpose}. Which concept should they study?`,
-      options: conceptOptions,
-      answerIndex: conceptOptions.indexOf(focus.concept),
-      explanation: `The correct concept is ${focus.concept}, because its role is to ${focus.purpose}.`
-    };
-  }
-
-  const conceptOptions = shuffle([
-    focus.concept,
-    ...pickFactConceptDistractors(chapter, focus.concept, 3)
-  ], seed);
-  return {
-    question: `Which concept would you study if you wanted to ${focus.purpose}?`,
-    options: conceptOptions,
-    answerIndex: conceptOptions.indexOf(focus.concept),
-    explanation: `You would study ${focus.concept}, because its role is to ${focus.purpose}.`
-  };
+  return finalizeQuestion(questionTemplates[0](chapter, facts[startIndex], level, offset, seed));
 }
 
 function pickFactDistractors(chapter, concept, field, count) {
-  const localPool = (chapter.facts || [])
+  const localPool = (chapter.studyItems || chapter.facts || [])
     .filter((fact) => fact.concept !== concept)
     .map((fact) => fact[field]);
   const globalPool = chapters
-    .flatMap((item) => item.facts || [])
+    .flatMap((item) => item.studyItems || item.facts || [])
     .filter((fact) => fact.concept !== concept)
     .map((fact) => fact[field]);
   return uniqueSlice([...localPool, ...globalPool], count);
 }
 
 function pickFactStatementDistractors(chapter, concept, field, count) {
-  const localPool = (chapter.facts || [])
+  const localPool = (chapter.studyItems || chapter.facts || [])
     .filter((fact) => fact.concept !== concept)
     .map((fact) => `${fact.concept}: ${fact[field]}`);
   const globalPool = chapters
-    .flatMap((item) => item.facts || [])
+    .flatMap((item) => item.studyItems || item.facts || [])
     .filter((fact) => fact.concept !== concept)
     .map((fact) => `${fact.concept}: ${fact[field]}`);
   return uniqueSlice([...localPool, ...globalPool], count);
 }
 
 function pickFactConceptDistractors(chapter, concept, count) {
-  const localPool = (chapter.facts || [])
+  const localPool = (chapter.studyItems || chapter.facts || [])
     .filter((fact) => fact.concept !== concept)
     .map((fact) => fact.concept);
   const globalPool = chapters
-    .flatMap((item) => item.facts || [])
+    .flatMap((item) => item.studyItems || item.facts || [])
     .filter((fact) => fact.concept !== concept)
     .map((fact) => fact.concept);
   return uniqueSlice([...localPool, ...globalPool], count);
 }
+
+function buildStudyItems(chapter) {
+  const items = [...(chapter.facts || [])];
+  const seen = new Set(items.map((item) => normalizeText(item.concept)));
+  const summarySentences = chapter.summary
+    .split(". ")
+    .map((sentence) => sentence.replace(/\.$/, "").trim())
+    .filter(Boolean)
+    .map((sentence) => sentence.replace(/^this chapter\s+/i, "this section "));
+
+  chapter.subtopics.forEach((topic, index) => {
+    const key = normalizeText(topic);
+    if (seen.has(key)) {
+      return;
+    }
+    const summarySentence = summarySentences[index % summarySentences.length] || chapter.summary;
+    const neighbor = chapter.subtopics[(index + 1) % chapter.subtopics.length] || chapter.title;
+    items.push({
+      concept: topic,
+      definition: `${topic} is a key idea from ${chapter.title.toLowerCase()} that supports understanding of ${summarySentence.toLowerCase()}.`,
+      purpose: `to strengthen understanding of ${topic.toLowerCase()} in relation to ${neighbor.toLowerCase()}`,
+      example: `reviewing how ${topic.toLowerCase()} appears in the ${chapter.title.toLowerCase()} discussion and examples`
+    });
+    seen.add(key);
+  });
+
+  return items;
+}
+
+function dedupeFlashcards(cards) {
+  const seen = new Set();
+  return cards.filter((card) => {
+    const key = cardTopicKey(card);
+    if (seen.has(key)) {
+      return false;
+    }
+    seen.add(key);
+    return true;
+  });
+}
+
+function cardTopicKey(card) {
+  return normalizeText(card.front)
+    .replace(/^explain\s+/, "")
+    .replace(/^how would you explain\s+/, "")
+    .replace(/["?.]/g, "")
+    .trim();
+}
+
+function uniqueOptions(options) {
+  const seen = new Set();
+  return options.filter((option) => {
+    const key = normalizeText(option);
+    if (seen.has(key)) {
+      return false;
+    }
+    seen.add(key);
+    return true;
+  });
+}
+
+function finalizeQuestion(question) {
+  const correctAnswer = question.options[question.answerIndex];
+  const options = [correctAnswer];
+  uniqueOptions(question.options).forEach((option) => {
+    if (!options.some((item) => normalizeText(item) === normalizeText(option))) {
+      options.push(option);
+    }
+  });
+
+  if (options.length < 4) {
+    const fillerPool = uniqueOptions(chapters.flatMap((chapter) => (chapter.studyItems || chapter.facts || []).map((fact) => fact.concept)));
+    fillerPool.forEach((option) => {
+      if (options.length < 4 && !options.some((item) => normalizeText(item) === normalizeText(option))) {
+        options.push(option);
+      }
+    });
+  }
+
+  const shuffledOptions = shuffle(
+    options.slice(0, 4),
+    createSeededRandom(normalizeText(question.question).length + normalizeText(correctAnswer).length)
+  );
+
+  return {
+    ...question,
+    options: shuffledOptions,
+    answerIndex: shuffledOptions.findIndex((option) => normalizeText(option) === normalizeText(correctAnswer))
+  };
+}
+
+const questionTemplates = [
+  (chapter, focus, level, offset, seed) => {
+    const correct = focus.definition;
+    const options = shuffle([correct, ...pickFactDistractors(chapter, focus.concept, "definition", 3)], seed);
+    return {
+      question: `Which statement best describes ${focus.concept}?`,
+      options,
+      answerIndex: options.indexOf(correct),
+      explanation: `${focus.concept} is defined as ${focus.definition}.`
+    };
+  },
+  (chapter, focus, level, offset, seed) => {
+    const correct = `${focus.concept}: ${focus.purpose}`;
+    const options = shuffle([correct, ...pickFactStatementDistractors(chapter, focus.concept, "purpose", 3)], seed);
+    return {
+      question: `Which statement correctly explains why ${focus.concept} matters?`,
+      options,
+      answerIndex: options.indexOf(correct),
+      explanation: `${focus.concept} matters because it helps ${focus.purpose}.`
+    };
+  },
+  (chapter, focus, level, offset, seed) => {
+    const correct = focus.concept;
+    const options = shuffle([correct, ...pickFactConceptDistractors(chapter, focus.concept, 3)], seed);
+    return {
+      question: `Which concept matches this description: ${focus.definition}?`,
+      options,
+      answerIndex: options.indexOf(correct),
+      explanation: `${focus.concept} is the concept defined as ${focus.definition}.`
+    };
+  },
+  (chapter, focus, level, offset, seed) => {
+    const correct = focus.concept;
+    const options = shuffle([correct, ...pickFactConceptDistractors(chapter, focus.concept, 3)], seed);
+    return {
+      question: `A student wants to learn the idea used to ${focus.purpose}. Which concept should they study?`,
+      options,
+      answerIndex: options.indexOf(correct),
+      explanation: `The correct concept is ${focus.concept}, because its role is to ${focus.purpose}.`
+    };
+  },
+  (chapter, focus, level, offset, seed) => {
+    const correct = focus.concept;
+    const options = shuffle([correct, ...pickFactConceptDistractors(chapter, focus.concept, 3)], seed);
+    return {
+      question: `Which concept would you study if you wanted to ${focus.purpose}?`,
+      options,
+      answerIndex: options.indexOf(correct),
+      explanation: `You would study ${focus.concept}, because its role is to ${focus.purpose}.`
+    };
+  },
+  (chapter, focus, level, offset, seed) => {
+    const correct = `${focus.concept}: ${focus.example}`;
+    const options = shuffle([correct, ...pickFactStatementDistractors(chapter, focus.concept, "example", 3)], seed);
+    return {
+      question: `Which example best illustrates ${focus.concept}?`,
+      options,
+      answerIndex: options.indexOf(correct),
+      explanation: `${focus.example} is a good example of ${focus.concept}.`
+    };
+  },
+  (chapter, focus, level, offset, seed) => {
+    const correct = focus.concept;
+    const options = shuffle([correct, ...pickFactConceptDistractors(chapter, focus.concept, 3)], seed);
+    return {
+      question: `In the section "${chapter.title}", which idea is most connected to this example: ${focus.example}?`,
+      options,
+      answerIndex: options.indexOf(correct),
+      explanation: `That example points to ${focus.concept}.`
+    };
+  },
+  (chapter, focus, level, offset, seed) => {
+    const correct = `${focus.concept}: ${focus.definition}`;
+    const options = shuffle([correct, ...pickFactStatementDistractors(chapter, focus.concept, "definition", 3)], seed);
+    return {
+      question: `Which concept-and-meaning pair is correct for this book section?`,
+      options,
+      answerIndex: options.indexOf(correct),
+      explanation: `${focus.concept} means ${focus.definition}.`
+    };
+  }
+];
+
+enrichChapters();
+init();
 
 function uniqueSlice(list, count) {
   const seen = new Set();

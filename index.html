@@ -3,14 +3,18 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Data Mining Interactive Textbook</title>
+  <title>Data Mining Quiz</title>
   <meta name="theme-color" content="#0b1f3a" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet" />
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="icon" href="icon-192.svg" type="image/svg+xml" />
   <link rel="stylesheet" href="styles.css" />
 </head>
+<<<<<<< HEAD
 <body data-page="home">
   <div class="app-shell">
     <header class="page-header card">
@@ -23,6 +27,20 @@
       </div>
       <div class="header-actions">
         <a class="quick-link" href="quiz.html">Open Quiz Page</a>
+=======
+<body data-page="quiz">
+  <div class="app-shell">
+    <header class="page-header card">
+      <div>
+        <p class="eyebrow">Book Quiz</p>
+        <h1>Data Mining Quiz Practice</h1>
+        <p class="hero-text">
+          Practice the real concepts from the book with clearer questions, saved progress, and a direct path into flashcards when you want to review.
+        </p>
+      </div>
+      <div class="header-actions">
+        <a class="quick-link" href="index.html">Quiz Page</a>
+>>>>>>> db1b2cb (m)
         <a class="quick-link" href="flashcards.html">Open Flashcards Page</a>
       </div>
     </header>
@@ -31,18 +49,31 @@
       <aside class="nav-panel card">
         <div class="section-heading">
           <h2>Navigator</h2>
+<<<<<<< HEAD
           <p>Use these pages to move around the textbook app.</p>
         </div>
 
         <nav class="nav-links">
           <a class="nav-link" data-nav="home" href="index.html">Chapters &amp; Progress</a>
           <a class="nav-link" data-nav="quiz" href="quiz.html">Quiz Page</a>
+=======
+          <p>Use the quiz and flashcards only.</p>
+        </div>
+
+        <nav class="nav-links">
+          <a class="nav-link" data-nav="quiz" href="index.html">Quiz Page</a>
+>>>>>>> db1b2cb (m)
           <a class="nav-link" data-nav="flashcards" href="flashcards.html">Flashcards Page</a>
         </nav>
 
         <div class="section-heading compact">
+<<<<<<< HEAD
           <h3>Choose Chapter</h3>
           <p>Pick a chapter once and the other pages follow it.</p>
+=======
+          <h3>Choose Book Section</h3>
+          <p>Switch the section you want to practice.</p>
+>>>>>>> db1b2cb (m)
         </div>
         <div class="chapter-select-wrap">
           <select id="chapter-select" class="chapter-select"></select>
@@ -57,7 +88,7 @@
             <strong id="completed-count">0 / 130</strong>
           </div>
           <div class="progress-row">
-            <span>Current chapter</span>
+            <span>Current section</span>
             <strong id="current-chapter-label">Chapter 1</strong>
           </div>
           <div class="progress-row">
@@ -68,13 +99,71 @@
       </aside>
 
       <section class="page-main">
+<<<<<<< HEAD
         <section class="card feature-card">
           <div class="section-heading">
             <h2 id="chapter-title">Chapter 1</h2>
             <p id="chapter-pages"></p>
+=======
+        <section class="card quiz-page-card">
+          <div class="section-heading">
+            <h2>Book Quiz</h2>
+            <p>Each book section has 10 levels and 100 questions in total. Higher levels get more complex.</p>
+          </div>
+
+          <div class="quiz-level-box">
+            <div class="quiz-level-head">
+              <div>
+                <h3>Choose Quiz Level</h3>
+                <p>Select one level at a time. Completed levels stay saved.</p>
+              </div>
+              <button
+                id="toggle-level-panel-button"
+                class="secondary-button level-toggle-button"
+                type="button"
+                aria-expanded="false"
+                aria-controls="level-panel-content"
+              >
+                Show Levels
+              </button>
+            </div>
+            <div id="level-panel-content" class="level-panel-content collapsed">
+              <div id="level-grid" class="level-grid"></div>
+            </div>
+          </div>
+
+          <div class="quiz-toolbar">
+            <div id="quiz-status" class="quiz-status">Choose a level to begin</div>
+            <div id="quiz-score-pill" class="quiz-score-pill">Score: 0</div>
+          </div>
+
+          <div class="progress-track">
+            <div id="quiz-progress-bar" class="progress-bar"></div>
+          </div>
+
+          <div id="quiz-panel" class="quiz-panel">
+            <div class="quiz-main-column">
+              <h3 id="quiz-question" class="quiz-question"></h3>
+              <div id="quiz-options" class="quiz-options"></div>
+              <div class="quiz-actions">
+                <button id="next-question-button" class="primary-button hidden" type="button">Next Question</button>
+              </div>
+            </div>
+            <aside id="quiz-feedback" class="quiz-feedback hidden"></aside>
+          </div>
+
+          <div id="quiz-results" class="hidden">
+            <div id="quiz-results-summary" class="results-summary"></div>
+            <div id="quiz-results-list" class="results-list"></div>
+            <div class="quiz-actions">
+              <button id="retry-quiz-button" class="secondary-button" type="button">Retry Quiz</button>
+              <button id="next-level-button" class="primary-button" type="button">Next Level</button>
+            </div>
+>>>>>>> db1b2cb (m)
           </div>
           <p id="chapter-summary-text" class="large-copy"></p>
         </section>
+<<<<<<< HEAD
 
         <section class="card">
           <div class="section-heading">
@@ -92,6 +181,8 @@
           <div id="saved-progress-empty" class="status-card">No saved progress yet. Complete a quiz level or view flashcards to start building history.</div>
           <div id="saved-progress-list" class="saved-progress-list"></div>
         </section>
+=======
+>>>>>>> db1b2cb (m)
       </section>
     </main>
   </div>

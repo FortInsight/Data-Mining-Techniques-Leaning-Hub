@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<<<<<<< HEAD
   <title>Quiz Page</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
@@ -17,11 +18,37 @@
         <p class="hero-text">Choose a level and begin practicing.</p>
       </div>
       <div class="header-actions">
+=======
+  <title>Data Mining Quiz</title>
+  <meta name="theme-color" content="#0b1f3a" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="icon" href="icon-192.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body data-page="quiz">
+  <div class="app-shell">
+    <header class="page-header card">
+      <div>
+        <p class="eyebrow">Book Quiz</p>
+        <h1>Data Mining Quiz Practice</h1>
+        <p class="hero-text">
+          Practice the real concepts from the book with clearer questions, saved progress, and a direct path into flashcards when you want to review.
+        </p>
+      </div>
+      <div class="header-actions">
+        <a class="quick-link" href="index.html">Quiz Page</a>
+>>>>>>> db1b2cb (m)
         <a class="quick-link" href="flashcards.html">Go to Flashcards</a>
       </div>
     </header>
 
     <main class="page-layout">
+<<<<<<< HEAD
 
       <!-- LEFT NAV -->
       <aside class="nav-panel card">
@@ -56,6 +83,71 @@
 
             <div id="level-grid" class="level-grid collapsible">
               <!-- Levels injected by app.js -->
+=======
+      <aside class="nav-panel card">
+        <div class="section-heading">
+          <h2>Navigator</h2>
+          <p>Use the quiz and flashcards only.</p>
+        </div>
+
+        <nav class="nav-links">
+          <a class="nav-link" data-nav="quiz" href="index.html">Quiz Page</a>
+          <a class="nav-link" data-nav="flashcards" href="flashcards.html">Flashcards Page</a>
+        </nav>
+
+        <div class="section-heading compact">
+          <h3>Choose Book Section</h3>
+          <p>Switch the section you want to practice.</p>
+        </div>
+        <div class="chapter-select-wrap">
+          <select id="chapter-select" class="chapter-select"></select>
+          <span class="chapter-select-arrow" aria-hidden="true">&#9662;</span>
+        </div>
+        <div id="chapter-current-card" class="chapter-current-card"></div>
+
+        <div class="progress-card">
+          <h3>Saved Progress</h3>
+          <div class="progress-row">
+            <span>Completed levels</span>
+            <strong id="completed-count">0 / 130</strong>
+          </div>
+          <div class="progress-row">
+            <span>Current section</span>
+            <strong id="current-chapter-label">Chapter 1</strong>
+          </div>
+          <div class="progress-row">
+            <span>Saved study</span>
+            <strong id="best-score-label">No activity yet</strong>
+          </div>
+        </div>
+      </aside>
+
+      <section class="page-main">
+        <section class="card quiz-page-card">
+          <div class="section-heading">
+            <h2>Book Quiz</h2>
+            <p>Each book section has 10 levels and 100 questions in total. Higher levels get more complex.</p>
+          </div>
+
+          <div class="quiz-level-box">
+            <div class="quiz-level-head">
+              <div>
+                <h3>Choose Quiz Level</h3>
+                <p>Select one level at a time. Completed levels stay saved.</p>
+              </div>
+              <button
+                id="toggle-level-panel-button"
+                class="secondary-button level-toggle-button"
+                type="button"
+                aria-expanded="false"
+                aria-controls="level-panel-content"
+              >
+                Show Levels
+              </button>
+            </div>
+            <div id="level-panel-content" class="level-panel-content collapsed">
+              <div id="level-grid" class="level-grid"></div>
+>>>>>>> db1b2cb (m)
             </div>
           </div>
 
@@ -87,13 +179,17 @@
               <button id="next-level-button" class="primary-button" type="button">Next Level</button>
             </div>
           </div>
+<<<<<<< HEAD
 
+=======
+>>>>>>> db1b2cb (m)
         </section>
       </section>
     </main>
   </div>
 
   <script src="app.js"></script>
+<<<<<<< HEAD
 
   <!-- COLLAPSIBLE CSS -->
   <style>
@@ -130,5 +226,7 @@
     });
   </script>
 
+=======
+>>>>>>> db1b2cb (m)
 </body>
 </html>
