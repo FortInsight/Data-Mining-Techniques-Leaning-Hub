@@ -608,10 +608,10 @@ const chapters = [
         explanation: "k-NN stores data and performs learning mainly when a new query arrives."
       },
       {
-        question: "Which topic appears as an advanced issue in this section on classification methods?",
+        question: "Which topic appears as an advanced issue in classification methods?",
         options: ["Transfer learning", "Bitmap join indexing", "Snowflake schema design", "Wavelet compression only"],
         answerIndex: 0,
-        explanation: "This section includes additional topics such as multiclass, semi-supervised, active, and transfer learning."
+        explanation: "Advanced classification methods include topics such as multiclass, semi-supervised, active, and transfer learning."
       }
     ]
   },
@@ -1290,11 +1290,6 @@ const chapterFacts = {
   ]
 };
 
-<<<<<<< HEAD
-enrichChapters();
-
-=======
->>>>>>> db1b2cb (m)
 const uiStateKey = "data-mining-interactive-textbook-ui-v1";
 const savedUiState = loadUiState();
 const state = {
@@ -1325,11 +1320,8 @@ const elements = {
   chapterTopics: document.getElementById("chapter-topics"),
   savedProgressList: document.getElementById("saved-progress-list"),
   savedProgressEmpty: document.getElementById("saved-progress-empty"),
-<<<<<<< HEAD
-=======
   toggleLevelPanelButton: document.getElementById("toggle-level-panel-button"),
   levelPanelContent: document.getElementById("level-panel-content"),
->>>>>>> db1b2cb (m)
   levelGrid: document.getElementById("level-grid"),
   quizStatus: document.getElementById("quiz-status"),
   quizScorePill: document.getElementById("quiz-score-pill"),
@@ -1345,11 +1337,8 @@ const elements = {
   retryQuizButton: document.getElementById("retry-quiz-button"),
   nextLevelButton: document.getElementById("next-level-button"),
   flashcard: document.getElementById("flashcard"),
-<<<<<<< HEAD
-=======
   flashcardFrontFace: document.querySelector(".flashcard-front"),
   flashcardBackFace: document.querySelector(".flashcard-back"),
->>>>>>> db1b2cb (m)
   flashcardFrontText: document.getElementById("flashcard-front-text"),
   flashcardBackText: document.getElementById("flashcard-back-text"),
   cardPosition: document.getElementById("card-position"),
@@ -1377,13 +1366,10 @@ function attachEvents() {
     });
   }
 
-<<<<<<< HEAD
-=======
   if (elements.toggleLevelPanelButton) {
     elements.toggleLevelPanelButton.addEventListener("click", toggleLevelPanel);
   }
 
->>>>>>> db1b2cb (m)
   if (elements.prevCardButton) {
     elements.prevCardButton.addEventListener("click", () => moveFlashcard(-1));
   }
@@ -1570,8 +1556,6 @@ function flipFlashcard() {
   renderFlashcardPage();
 }
 
-<<<<<<< HEAD
-=======
 function syncFlashcardHeight() {
   if (!elements.flashcard || !elements.flashcardFrontFace || !elements.flashcardBackFace) {
     return;
@@ -1585,16 +1569,12 @@ function syncFlashcardHeight() {
   });
 }
 
->>>>>>> db1b2cb (m)
 function renderQuizPage() {
   if (!elements.levelGrid) {
     return;
   }
 
-<<<<<<< HEAD
-=======
   syncLevelPanelState();
->>>>>>> db1b2cb (m)
   renderLevelButtons();
   if (!state.quizQuestions.length) {
     resetQuiz();
@@ -1612,10 +1592,7 @@ function startLevel(level) {
   state.quizResults = [];
   saveUiState();
   renderLevelButtons();
-<<<<<<< HEAD
-=======
   setLevelPanelCollapsed(true);
->>>>>>> db1b2cb (m)
   resetQuiz();
   if (elements.quizQuestion) {
     elements.quizQuestion.scrollIntoView({
@@ -1719,7 +1696,7 @@ function checkAnswer(selectedIndex) {
   elements.quizFeedback.className = `quiz-feedback ${isCorrect ? "correct" : "wrong"}`;
   elements.quizFeedback.innerHTML = `
     <div class="feedback-head">
-      <span class="feedback-emoji">${isCorrect ? "ðŸŽ‰" : "ðŸ“•"}</span>
+      <span class="feedback-emoji">${isCorrect ? "🎉" : "📘"}</span>
       <strong>${isCorrect ? "Correct answer" : "Wrong answer"}</strong>
     </div>
     <div>${question.explanation}</div>
@@ -1795,8 +1772,6 @@ function renderLevelButtons() {
   }
 }
 
-<<<<<<< HEAD
-=======
 function toggleLevelPanel() {
   if (!elements.levelPanelContent) {
     return;
@@ -1824,7 +1799,6 @@ function syncLevelPanelState() {
   setLevelPanelCollapsed(true);
 }
 
->>>>>>> db1b2cb (m)
 function moveToNextLevel() {
   if (state.selectedLevel < 10) {
     startLevel(state.selectedLevel + 1);
@@ -1922,7 +1896,7 @@ function enrichChapters() {
   chapters.forEach((chapter) => {
     const factCards = chapter.studyItems.map((fact) => ({
       front: `Explain ${fact.concept}.`,
-      back: `${fact.concept.toUpperCase()}\n\nMeaning: ${fact.definition}.\n\nWhy it matters: ${fact.purpose}.\n\nExample: ${fact.example}.\n\nStudy link: This is a core idea in the book section "${chapter.title}".`
+      back: `${fact.concept.toUpperCase()}\n\nMeaning: ${fact.definition}.\n\nWhy it matters: ${fact.purpose}.\n\nExample: ${fact.example}.\n\nStudy link: This idea connects strongly to ${chapter.title}.`
     }));
 
     const generatedFlashcards = chapter.subtopics.map((topic, index) => ({
@@ -1930,11 +1904,7 @@ function enrichChapters() {
       back: buildTopicExplanation(chapter, topic, index)
     }));
 
-<<<<<<< HEAD
-    chapter.flashcards = [...chapter.flashcards, ...factCards, ...generatedFlashcards];
-=======
     chapter.flashcards = dedupeFlashcards([...chapter.flashcards, ...factCards, ...generatedFlashcards]);
->>>>>>> db1b2cb (m)
     chapter.questionBank = buildQuestionBank(chapter);
   });
 }
@@ -1942,7 +1912,7 @@ function enrichChapters() {
 function buildTopicExplanation(chapter, topic, index) {
   const matchingFact = (chapter.studyItems || []).find((fact) => normalizeText(fact.concept) === normalizeText(topic));
   if (matchingFact) {
-    return `${matchingFact.concept.toUpperCase()}\n\nMeaning: ${matchingFact.definition}.\n\nWhy it matters: ${matchingFact.purpose}.\n\nExample: ${matchingFact.example}.\n\nStudy tip: Connect this idea back to the full book section theme "${chapter.title}".`;
+    return `${matchingFact.concept.toUpperCase()}\n\nMeaning: ${matchingFact.definition}.\n\nWhy it matters: ${matchingFact.purpose}.\n\nExample: ${matchingFact.example}.\n\nStudy tip: Connect this idea back to ${chapter.title}.`;
   }
 
   const summarySentences = chapter.summary.split(". ").filter(Boolean);
@@ -2040,7 +2010,9 @@ function buildStudyItems(chapter) {
     .split(". ")
     .map((sentence) => sentence.replace(/\.$/, "").trim())
     .filter(Boolean)
-    .map((sentence) => sentence.replace(/^this chapter\s+/i, "this section "));
+    .map((sentence) => sentence.replace(/^this chapter\s+/i, ""))
+    .map((sentence) => sentence.replace(/^this section\s+/i, ""))
+    .map((sentence) => sentence.charAt(0).toLowerCase() + sentence.slice(1));
 
   chapter.subtopics.forEach((topic, index) => {
     const key = normalizeText(topic);
@@ -2051,7 +2023,7 @@ function buildStudyItems(chapter) {
     const neighbor = chapter.subtopics[(index + 1) % chapter.subtopics.length] || chapter.title;
     items.push({
       concept: topic,
-      definition: `${topic} is a key idea from ${chapter.title.toLowerCase()} that supports understanding of ${summarySentence.toLowerCase()}.`,
+      definition: `${topic} is a key idea in ${chapter.title.toLowerCase()} and is used to understand ${summarySentence}.`,
       purpose: `to strengthen understanding of ${topic.toLowerCase()} in relation to ${neighbor.toLowerCase()}`,
       example: `reviewing how ${topic.toLowerCase()} appears in the ${chapter.title.toLowerCase()} discussion and examples`
     });
@@ -2188,7 +2160,7 @@ const questionTemplates = [
     const correct = focus.concept;
     const options = shuffle([correct, ...pickFactConceptDistractors(chapter, focus.concept, 3)], seed);
     return {
-      question: `In the section "${chapter.title}", which idea is most connected to this example: ${focus.example}?`,
+      question: `Which concept is most closely connected to this example: ${focus.example}?`,
       options,
       answerIndex: options.indexOf(correct),
       explanation: `That example points to ${focus.concept}.`
@@ -2198,7 +2170,7 @@ const questionTemplates = [
     const correct = `${focus.concept}: ${focus.definition}`;
     const options = shuffle([correct, ...pickFactStatementDistractors(chapter, focus.concept, "definition", 3)], seed);
     return {
-      question: `Which concept-and-meaning pair is correct for this book section?`,
+      question: "Which concept-and-meaning pair is correct?",
       options,
       answerIndex: options.indexOf(correct),
       explanation: `${focus.concept} means ${focus.definition}.`
