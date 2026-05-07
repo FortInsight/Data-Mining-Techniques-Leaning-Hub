@@ -1291,6 +1291,7 @@ const chapterFacts = {
 };
 
 const uiStateKey = "data-mining-interactive-textbook-ui-v1";
+const profilesStoreKey = "data-mining-learning-profiles-v1";
 const savedUiState = loadUiState();
 const state = {
   chapterIndex: savedUiState.chapterIndex ?? 0,
@@ -1301,16 +1302,28 @@ const state = {
   quizIndex: 0,
   quizScore: 0,
   quizAnswered: false,
-  quizResults: []
+  quizResults: [],
+  currentProfileId: null
 };
 
-const progress = loadProgress();
+const profilesStore = loadProfilesStore();
+let progress = loadGuestProgress();
 const currentPage = document.body.dataset.page || "home";
 
 const elements = {
   navLinks: [...document.querySelectorAll("[data-nav]")],
+  profileNameLabel: document.getElementById("profile-name-label"),
+  profileNameInput: document.getElementById("profile-name"),
+  profilePasswordInput: document.getElementById("profile-password"),
+  createProfileButton: document.getElementById("create-profile-button"),
+  loginProfileButton: document.getElementById("login-profile-button"),
+  logoutProfileButton: document.getElementById("logout-profile-button"),
+  profileMessage: document.getElementById("profile-message"),
+  toggleProfilePanelButton: document.getElementById("toggle-profile-panel-button"),
+  profilePanelContent: document.getElementById("profile-panel-content"),
   chapterSelect: document.getElementById("chapter-select"),
   chapterCurrentCard: document.getElementById("chapter-current-card"),
+  saveStatusLabel: document.getElementById("save-status-label"),
   completedCount: document.getElementById("completed-count"),
   currentChapterLabel: document.getElementById("current-chapter-label"),
   bestScoreLabel: document.getElementById("best-score-label"),
@@ -1348,6 +1361,7 @@ const elements = {
 
 function init() {
   attachEvents();
+  applyCurrentProfile();
   renderNavigation();
   renderChapterSelector();
   renderCurrentChapterCard();
@@ -1360,6 +1374,22 @@ function init() {
 }
 
 function attachEvents() {
+  if (elements.createProfileButton) {
+    elements.createProfileButton.addEventListener("click", handleCreateProfile);
+  }
+
+  if (elements.loginProfileButton) {
+    elements.loginProfileButton.addEventListener("click", handleLoginProfile);
+  }
+
+  if (elements.logoutProfileButton) {
+    elements.logoutProfileButton.addEventListener("click", handleLogoutProfile);
+  }
+
+  if (elements.toggleProfilePanelButton) {
+    elements.toggleProfilePanelButton.addEventListener("click", toggleProfilePanel);
+  }
+
   if (elements.chapterSelect) {
     elements.chapterSelect.addEventListener("change", (event) => {
       selectChapter(Number(event.target.value));
@@ -1393,6 +1423,16 @@ function attachEvents() {
   if (elements.nextLevelButton) {
     elements.nextLevelButton.addEventListener("click", moveToNextLevel);
   }
+}
+
+function toggleProfilePanel() {
+  if (!elements.profilePanelContent || !elements.toggleProfilePanelButton) {
+    return;
+  }
+
+  const isHidden = elements.profilePanelContent.classList.toggle("hidden");
+  elements.toggleProfilePanelButton.textContent = isHidden ? "Show Profile" : "Hide Profile";
+  elements.toggleProfilePanelButton.setAttribute("aria-expanded", String(!isHidden));
 }
 
 function renderNavigation() {
@@ -1807,6 +1847,114 @@ function moveToNextLevel() {
   startLevel(state.selectedLevel);
 }
 
+function handleCreateProfile() {
+  const name = elements.profileNameInput?.value.trim() || "";
+  const password = elements.profilePasswordInput?.value || "";
+
+  if (!name || !password) {
+    showProfileMessage("Enter both a learner name and password to create a profile.", "error");
+    return;
+  }
+
+  const profileId = buildProfileId(name);
+  if (profilesStore.profiles[profileId]) {
+    showProfileMessage("That learner name already exists in this browser. Log in instead.", "error");
+    return;
+  }
+
+  profilesStore.profiles[profileId] = {
+    id: profileId,
+    name,
+    passwordHash: hashPassword(password),
+    progress: {}
+  };
+  profilesStore.currentProfileId = profileId;
+  saveProfilesStore();
+  applyCurrentProfile();
+  showProfileMessage(`Profile created for ${name}. Your book quiz and flashcard progress will now save here.`, "success");
+}
+
+function handleLoginProfile() {
+  const name = elements.profileNameInput?.value.trim() || "";
+  const password = elements.profilePasswordInput?.value || "";
+
+  if (!name || !password) {
+    showProfileMessage("Enter the learner name and password to log in.", "error");
+    return;
+  }
+
+  const profileId = buildProfileId(name);
+  const profile = profilesStore.profiles[profileId];
+
+  if (!profile || profile.passwordHash !== hashPassword(password)) {
+    showProfileMessage("The learner name or password does not match a saved profile.", "error");
+    return;
+  }
+
+  profilesStore.currentProfileId = profileId;
+  saveProfilesStore();
+  applyCurrentProfile();
+  showProfileMessage(`Welcome back, ${profile.name}. Your saved book learning progress is loaded.`, "success");
+}
+
+function handleLogoutProfile() {
+  profilesStore.currentProfileId = null;
+  saveProfilesStore();
+  applyCurrentProfile();
+  showProfileMessage("You are now signed out. Guest browser progress is active again.", "success");
+}
+
+function applyCurrentProfile() {
+  state.currentProfileId = profilesStore.currentProfileId;
+  const profile = getCurrentProfile();
+
+  if (profile) {
+    ensureProfileShape(profile);
+    progress = profile.progress;
+    if (elements.profileNameLabel) {
+      elements.profileNameLabel.textContent = profile.name;
+    }
+    if (elements.saveStatusLabel) {
+      elements.saveStatusLabel.textContent = profile.name;
+    }
+    if (elements.logoutProfileButton) {
+      elements.logoutProfileButton.classList.remove("hidden");
+    }
+  } else {
+    progress = loadGuestProgress();
+    if (elements.profileNameLabel) {
+      elements.profileNameLabel.textContent = "Guest";
+    }
+    if (elements.saveStatusLabel) {
+      elements.saveStatusLabel.textContent = "Guest browser";
+    }
+    if (elements.logoutProfileButton) {
+      elements.logoutProfileButton.classList.add("hidden");
+    }
+  }
+
+  resetSessionState();
+}
+
+function resetSessionState() {
+  state.flashcardFlipped = false;
+  state.quizQuestions = [];
+  state.quizIndex = 0;
+  state.quizScore = 0;
+  state.quizAnswered = false;
+  state.quizResults = [];
+}
+
+function showProfileMessage(message, type) {
+  if (!elements.profileMessage) {
+    return;
+  }
+
+  elements.profileMessage.className = `feedback-box ${type === "error" ? "error" : "success"}`;
+  elements.profileMessage.textContent = message;
+  elements.profileMessage.classList.remove("hidden");
+}
+
 function updateProgressPanel() {
   const chapter = getCurrentChapter();
   const completed = Object.values(progress).reduce((total, item) => total + Object.keys(item.levels || {}).length, 0);
@@ -1848,7 +1996,40 @@ function ensureChapterProgress(chapterId) {
   return progress[chapterId];
 }
 
-function loadProgress() {
+function getCurrentProfile() {
+  if (!state.currentProfileId) {
+    return null;
+  }
+
+  const profile = profilesStore.profiles[state.currentProfileId] || null;
+  if (profile) {
+    ensureProfileShape(profile);
+  }
+  return profile;
+}
+
+function ensureProfileShape(profile) {
+  if (!profile.progress || typeof profile.progress !== "object") {
+    profile.progress = {};
+  }
+}
+
+function loadProfilesStore() {
+  try {
+    const stored = JSON.parse(localStorage.getItem(profilesStoreKey));
+    return stored && typeof stored === "object"
+      ? { currentProfileId: stored.currentProfileId || null, profiles: stored.profiles || {} }
+      : { currentProfileId: null, profiles: {} };
+  } catch (error) {
+    return { currentProfileId: null, profiles: {} };
+  }
+}
+
+function saveProfilesStore() {
+  localStorage.setItem(profilesStoreKey, JSON.stringify(profilesStore));
+}
+
+function loadGuestProgress() {
   try {
     return JSON.parse(localStorage.getItem(storageKey)) || {};
   } catch (error) {
@@ -1857,6 +2038,15 @@ function loadProgress() {
 }
 
 function saveProgress() {
+  const profile = getCurrentProfile();
+
+  if (profile) {
+    profile.progress = progress;
+    profilesStore.profiles[profile.id] = profile;
+    saveProfilesStore();
+    return;
+  }
+
   localStorage.setItem(storageKey, JSON.stringify(progress));
 }
 
@@ -2200,6 +2390,23 @@ function uniqueSlice(list, count) {
 
 function normalizeText(text) {
   return String(text).trim().toLowerCase();
+}
+
+function buildProfileId(name) {
+  return name.trim().toLowerCase().replace(/\s+/g, "-");
+}
+
+function hashPassword(password) {
+  return String(hashCode(`data-mining-book:${password}`));
+}
+
+function hashCode(value) {
+  let hash = 0;
+  for (let index = 0; index < value.length; index += 1) {
+    hash = (hash << 5) - hash + value.charCodeAt(index);
+    hash |= 0;
+  }
+  return hash;
 }
 
 function saveFlashcardProgress() {
