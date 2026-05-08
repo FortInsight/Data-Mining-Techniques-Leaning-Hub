@@ -42,44 +42,6 @@
           <a class="nav-link" data-nav="flashcards" href="flashcards.html">Flashcards Page</a>
         </nav>
 
-        <div class="section-heading compact section-heading--collapsible">
-          <div>
-            <h3>Learner Profile</h3>
-            <p>Create a learner profile with a name and password to save book progress.</p>
-          </div>
-          <button id="toggle-profile-panel-button" class="secondary-button collapse-button" type="button" aria-expanded="false">
-            Show Profile
-          </button>
-        </div>
-
-        <div id="profile-panel-content" class="hidden">
-          <div class="profile-panel">
-            <div class="profile-current">
-              <div class="progress-row">
-                <span>Current learner</span>
-                <strong id="profile-name-label">Guest</strong>
-              </div>
-            </div>
-
-            <div class="profile-form">
-              <label class="field-label" for="profile-name">Name</label>
-              <input id="profile-name" type="text" placeholder="Enter learner name" />
-
-              <label class="field-label" for="profile-password">Password</label>
-              <input id="profile-password" type="password" placeholder="Create or enter password" />
-
-              <div class="profile-actions">
-                <button id="create-profile-button" class="primary-button" type="button">Create Profile</button>
-                <button id="login-profile-button" class="secondary-button" type="button">Log In</button>
-                <button id="logout-profile-button" class="secondary-button hidden" type="button">Log Out</button>
-              </div>
-            </div>
-
-            <p class="profile-note">Saved only in this browser on this device.</p>
-            <div id="profile-message" class="feedback-box hidden"></div>
-          </div>
-        </div>
-
         <div class="section-heading compact">
           <h3>Choose Book Section</h3>
           <p>Switch the section you want to practice.</p>
@@ -92,10 +54,6 @@
 
         <div class="progress-card">
           <h3>Saved Progress</h3>
-          <div class="progress-row">
-            <span>Saved to</span>
-            <strong id="save-status-label">Guest browser</strong>
-          </div>
           <div class="progress-row">
             <span>Completed levels</span>
             <strong id="completed-count">0 / 130</strong>
