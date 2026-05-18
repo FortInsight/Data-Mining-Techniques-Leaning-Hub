@@ -56,7 +56,7 @@
           <h3>Saved Progress</h3>
           <div class="progress-row">
             <span>Completed levels</span>
-            <strong id="completed-count">0 / 130</strong>
+            <strong id="completed-count">0 / 65</strong>
           </div>
           <div class="progress-row">
             <span>Current section</span>
@@ -73,7 +73,7 @@
         <section class="card quiz-page-card">
           <div class="section-heading">
             <h2>Book Quiz</h2>
-            <p>Each book section has 10 levels and 100 questions in total. Higher levels get more complex.</p>
+            <p>Each book section has 5 levels and 50 questions in total. Higher levels get more complex.</p>
           </div>
 
           <div class="quiz-level-box">
@@ -82,15 +82,22 @@
                 <h3>Choose Quiz Level</h3>
                 <p>Select one level at a time. Completed levels stay saved.</p>
               </div>
-              <button
-                id="toggle-level-panel-button"
-                class="secondary-button level-toggle-button"
-                type="button"
-                aria-expanded="false"
-                aria-controls="level-panel-content"
-              >
-                Show Levels
-              </button>
+              <div class="quiz-level-actions">
+                <div class="quiz-level-summary">
+                  <div id="chapter-completed-pill" class="quiz-score-pill">Completed: 0/5</div>
+                  <div id="chapter-score-pill" class="quiz-score-pill">Saved score: 0/50</div>
+                  <div id="chapter-percent-pill" class="quiz-score-pill">Achieved: 0%</div>
+                </div>
+                <button
+                  id="toggle-level-panel-button"
+                  class="secondary-button level-toggle-button"
+                  type="button"
+                  aria-expanded="false"
+                  aria-controls="level-panel-content"
+                >
+                  Show Levels
+                </button>
+              </div>
             </div>
             <div id="level-panel-content" class="level-panel-content collapsed">
               <div id="level-grid" class="level-grid"></div>

@@ -404,6 +404,22 @@ h1 {
   margin: 0;
 }
 
+.quiz-level-actions {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.quiz-level-summary {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
 .level-toggle-button {
   flex: 0 0 auto;
 }
@@ -434,10 +450,32 @@ h1 {
   cursor: pointer;
 }
 
+.level-button.pending {
+  border-color: rgba(235, 87, 87, 0.55);
+  background: linear-gradient(180deg, rgba(235, 87, 87, 0.2), rgba(88, 23, 23, 0.55));
+}
+
+.level-button.completed {
+  border-color: rgba(39, 174, 96, 0.55);
+  background: linear-gradient(180deg, rgba(39, 174, 96, 0.22), rgba(18, 74, 48, 0.58));
+}
+
+.level-button.active {
+  box-shadow: 0 0 0 2px rgba(75, 163, 234, 0.7), 0 14px 28px rgba(7, 16, 28, 0.28);
+}
+
+.level-button.completed.active {
+  background: linear-gradient(135deg, rgba(48, 196, 113, 0.92), rgba(19, 120, 72, 0.96));
+}
+
+.level-button.pending.active {
+  background: linear-gradient(135deg, rgba(235, 87, 87, 0.92), rgba(150, 36, 36, 0.96));
+}
+
 .level-meta {
   display: block;
   margin-top: 0.3rem;
-  color: rgba(255, 255, 255, 0.86);
+  color: rgba(255, 255, 255, 0.92);
   font-size: 0.86rem;
 }
 
@@ -500,6 +538,36 @@ h1 {
   color: #ffffff;
 }
 
+.question-block {
+  display: grid;
+  gap: 0.8rem;
+}
+
+.question-block p {
+  margin: 0;
+}
+
+.quiz-data-table {
+  width: min(100%, 420px);
+  border-collapse: collapse;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  font-size: 0.95rem;
+}
+
+.quiz-data-table th,
+.quiz-data-table td {
+  padding: 0.5rem 0.65rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  text-align: center;
+  color: #ffffff;
+}
+
+.quiz-data-table th {
+  background: rgba(75, 163, 234, 0.16);
+  font-weight: 800;
+}
+
 .quiz-option {
   font-size: 1.06rem;
   line-height: 1.5;
@@ -539,6 +607,14 @@ h1 {
   align-items: center;
   gap: 0.7rem;
   margin-bottom: 0.4rem;
+}
+
+.feedback-actions {
+  margin-top: 0.8rem;
+}
+
+.feedback-study-button {
+  width: 100%;
 }
 
 .feedback-emoji {
@@ -715,6 +791,16 @@ h1 {
   .quiz-level-head {
     flex-direction: column;
     align-items: stretch;
+  }
+
+  .quiz-level-actions,
+  .quiz-level-summary {
+    width: 100%;
+    justify-content: stretch;
+  }
+
+  .quiz-level-summary .quiz-score-pill {
+    flex: 1 1 100%;
   }
 
   .section-heading--collapsible,
